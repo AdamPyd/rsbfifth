@@ -3,23 +3,46 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
-      <profile name="Annotation profile for rsbfifth" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$USER_HOME$/04-configuration/repository-mac/repository/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
-        </processorPath>
-        <module name="rsbfifth" />
+        <module name="rsbdecond-core-service" />
+        <module name="rsbsecond-biz-service-impl" />
+        <module name="rsbsecond-biz-shared" />
+        <module name="rsbsecond-common-dal" />
+        <module name="rsbsecond-common-service-facade" />
+        <module name="rsbsecond-common-service-integration" />
+        <module name="rsbsecond-common-util" />
+        <module name="rsbsecond-core-model" />
+        <module name="rsbsecond-web-home" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="rsbfifth" target="1.5" />
+      <module name="rsbdecond-core-service" target="1.8" />
+      <module name="rsbfifth" target="1.8" />
+      <module name="rsbsecond-biz-service-impl" target="1.8" />
+      <module name="rsbsecond-biz-shared" target="1.8" />
+      <module name="rsbsecond-common-dal" target="1.8" />
+      <module name="rsbsecond-common-service-facade" target="1.8" />
+      <module name="rsbsecond-common-service-integration" target="1.8" />
+      <module name="rsbsecond-common-util" target="1.8" />
+      <module name="rsbsecond-core-model" target="1.8" />
+      <module name="rsbsecond-web-home" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="rsbdecond-core-service" options="-parameters" />
       <module name="rsbfifth" options="-parameters" />
+      <module name="rsbsecond-biz-service-impl" options="-parameters" />
+      <module name="rsbsecond-biz-shared" options="-parameters" />
+      <module name="rsbsecond-common-dal" options="-parameters" />
+      <module name="rsbsecond-common-service-facade" options="-parameters" />
+      <module name="rsbsecond-common-service-integration" options="-parameters" />
+      <module name="rsbsecond-common-util" options="-parameters" />
+      <module name="rsbsecond-core-model" options="-parameters" />
+      <module name="rsbsecond-web-home" options="-parameters" />
     </option>
   </component>
 </project>
