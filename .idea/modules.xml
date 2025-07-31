@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/backend/web/home/web-home.iml" filepath="$PROJECT_DIR$/backend/web/home/web-home.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rsbfifth.iml" filepath="$PROJECT_DIR$/rsbfifth.iml" />
     </modules>
   </component>
 </project>
