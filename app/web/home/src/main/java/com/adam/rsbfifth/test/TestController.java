@@ -22,12 +22,12 @@ public class TestController {
     @Autowired
     private TestManager testManager;
 
-    @GetMapping("testController")
+    @GetMapping("hello.json")
     @ResponseBody
     private String testController(){
         TestUtil.testUtil();
         testManager.testManager();
         System.out.println("testController");
-        return "{123}";
+        return "Hello World~";
     }
 }
