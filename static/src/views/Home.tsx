@@ -3,7 +3,7 @@ import { Card, Spin } from 'antd';
 import { ApiResponse, SampleData } from '../types/api';
 
 // static/src/views/Home.tsx
-const API_BASE = import.meta.env.REACT_APP_API_BASE || '';
+const API_BASE = window.REACT_APP_API_BASE || '';
 
 const Home: React.FC = () => {
     const [data, setData] = useState<SampleData | null>(null);

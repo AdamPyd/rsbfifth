@@ -1,7 +1,20 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import path from 'path';
+import { fileURLToPath } from 'url';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
+import dotenv from 'dotenv';
 
-module.exports = {
+// 解决 __dirname 在 ES 模块中的问题
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 加载环境变量
+dotenv.config({ path: path.resolve(__dirname, '.env.development') });
+
+// 获取 API 基础 URL
+const apiBase = process.env.REACT_APP_API_BASE || 'http://localhost:80';
+
+export default {
     entry: './src/index.tsx',
     output: {
         path: path.resolve(__dirname, '../app/src/main/resources/static'),
@@ -34,6 +47,10 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './public/index.html'
         }),
+        // 注入环境变量到前端代码
+        new webpack.DefinePlugin({
+            'window.API_BASE': JSON.stringify(apiBase)
+        })
     ],
     devServer: {
         static: {
@@ -41,12 +58,12 @@ module.exports = {
         },
         port: 3000,
         historyApiFallback: {
-            disableDotRule: true, // 添加此配置
-            index: '/',           // 确保指定索引文件
+            disableDotRule: true,
+            index: '/',
         },
         proxy: {
             '/api': {
-                target: import.meta.env.REACT_APP_API_BASE || 'http://localhost:80',
+                target: apiBase,
                 changeOrigin: true,
                 pathRewrite: { '^/api': '' },
                 secure: false

@@ -8,6 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="rsbdecond-core-service" />
+        <module name="rsbfifth-biz-service-impl" />
+        <module name="rsbfifth-biz-shared" />
+        <module name="rsbfifth-common-dal" />
+        <module name="rsbfifth-common-service-facade" />
+        <module name="rsbfifth-common-service-integration" />
+        <module name="rsbfifth-common-util" />
+        <module name="rsbfifth-core-model" />
         <module name="rsbsecond-biz-service-impl" />
         <module name="rsbsecond-biz-shared" />
         <module name="rsbsecond-common-dal" />
@@ -21,6 +28,13 @@
     <bytecodeTargetLevel>
       <module name="rsbdecond-core-service" target="1.8" />
       <module name="rsbfifth" target="1.8" />
+      <module name="rsbfifth-biz-service-impl" target="1.8" />
+      <module name="rsbfifth-biz-shared" target="1.8" />
+      <module name="rsbfifth-common-dal" target="1.8" />
+      <module name="rsbfifth-common-service-facade" target="1.8" />
+      <module name="rsbfifth-common-service-integration" target="1.8" />
+      <module name="rsbfifth-common-util" target="1.8" />
+      <module name="rsbfifth-core-model" target="1.8" />
       <module name="rsbsecond-biz-service-impl" target="1.8" />
       <module name="rsbsecond-biz-shared" target="1.8" />
       <module name="rsbsecond-common-dal" target="1.8" />
@@ -35,6 +49,13 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="rsbdecond-core-service" options="-parameters" />
       <module name="rsbfifth" options="-parameters" />
+      <module name="rsbfifth-biz-service-impl" options="-parameters" />
+      <module name="rsbfifth-biz-shared" options="-parameters" />
+      <module name="rsbfifth-common-dal" options="-parameters" />
+      <module name="rsbfifth-common-service-facade" options="-parameters" />
+      <module name="rsbfifth-common-service-integration" options="-parameters" />
+      <module name="rsbfifth-common-util" options="-parameters" />
+      <module name="rsbfifth-core-model" options="-parameters" />
       <module name="rsbsecond-biz-service-impl" options="-parameters" />
       <module name="rsbsecond-biz-shared" options="-parameters" />
       <module name="rsbsecond-common-dal" options="-parameters" />
