@@ -2,18 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4d2e3895-f217-463c-97d4-e6a59395aeef" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/web/home/rsbsecond-web-home.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/web/home/rsbsecond-web-home.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/web/home/target/classes/META-INF/rsbsecond-web-home.kotlin_module" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/web/home/target/classes/com/adam/rsbsecond/RsbsecondApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/web/home/target/classes/com/adam/rsbsecond/test/TestController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/web/home/target/test-classes/META-INF/rsbsecond-web-home.kotlin_module" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/web/home/target/test-classes/com/adam/rsbsecond/RsbsecondApplicationTests.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/test/TestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/test/TestController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/static/node_modules/.package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/static/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/static/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/src/.env.development" beforeDir="false" afterPath="$PROJECT_DIR$/static/.env.development" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/src/views/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/static/src/views/Home.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/webpack.config.js" afterDir="false" />
     </list>
@@ -35,11 +29,49 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/static/webpack.config.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="275">
+              <caret line="48" column="11" selection-start-line="48" selection-start-column="11" selection-end-line="48" selection-end-column="11" />
+              <folding>
+                <element signature="e#0#24#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/test/TestController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="199">
+              <caret line="34" column="41" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/static/public/manifest.json">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/web/home/config/CorsConfig.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="440">
+              <caret line="34" column="1" selection-start-line="34" selection-start-column="1" selection-end-line="34" selection-end-column="1" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/static/src/views/Home.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
-              <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+            <state relative-caret-position="270">
+              <caret line="16" column="49" lean-forward="true" selection-start-line="16" selection-start-column="49" selection-end-line="16" selection-end-column="49" />
               <folding>
                 <element signature="e#0#51#0" expanded="true" />
               </folding>
@@ -48,15 +80,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/static/src/.env.development">
+        <entry file="file://$PROJECT_DIR$/static/src/types/api.d.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22">
-              <caret line="1" selection-start-line="1" selection-end-line="1" />
+            <state relative-caret-position="220">
+              <caret line="10" column="13" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -79,8 +118,16 @@
       <find>createProxyMiddleware</find>
       <find>process</find>
       <find>process.</find>
-      <find>webpack</find>
       <find>REACT_APP_API_BASE</find>
+      <find>REACT_APP_REACT_APP_API_BASE</find>
+      <find>VITE_API_BASE</find>
+      <find>dotenv</find>
+      <find>Dotenv</find>
+      <find>apiBase</find>
+      <find>env.development</find>
+      <find>buffer</find>
+      <find>webpack</find>
+      <find>plugins</find>
     </findStrings>
     <replaceStrings>
       <replace>Rsbfifth</replace>
@@ -100,15 +147,16 @@
         <option value="$PROJECT_DIR$/static/src/index.tsx" />
         <option value="$PROJECT_DIR$/static/src/types/api.d.ts" />
         <option value="$PROJECT_DIR$/static/package-lock.json" />
-        <option value="$PROJECT_DIR$/static/src/.env.development" />
         <option value="$PROJECT_DIR$/static/src/setupProxy.js" />
-        <option value="$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/test/TestController.java" />
         <option value="$PROJECT_DIR$/static/src/App.tsx" />
         <option value="$PROJECT_DIR$/static/env-config.js" />
         <option value="$PROJECT_DIR$/static/src/tsconfig.json" />
-        <option value="$PROJECT_DIR$/static/webpack.config.js" />
         <option value="$PROJECT_DIR$/static/package.json" />
         <option value="$PROJECT_DIR$/static/src/views/Home.tsx" />
+        <option value="$PROJECT_DIR$/static/src/.env.development" />
+        <option value="$PROJECT_DIR$/static/webpack.config.js" />
+        <option value="$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/web/home/config/CorsConfig.java" />
+        <option value="$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/test/TestController.java" />
       </list>
     </option>
   </component>
@@ -233,13 +281,85 @@
             <path>
               <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
               <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="web" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="adam" type="462c0819:PsiDirectoryNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="web" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="adam" type="462c0819:PsiDirectoryNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="web" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="web" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="adam" type="462c0819:PsiDirectoryNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="web" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="web" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="adam" type="462c0819:PsiDirectoryNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="web" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
               <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rsbfifth" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="types" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="rsbfifth" type="b2602c69:ProjectViewProjectNode" />
@@ -265,7 +385,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1754130310719" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1754265493176" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -273,6 +393,11 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -337,18 +462,18 @@
       <workItem from="1754016710310" duration="2454000" />
       <workItem from="1754024112438" duration="3199000" />
       <workItem from="1754094926058" duration="972000" />
-      <workItem from="1754129258861" duration="880000" />
+      <workItem from="1754129258861" duration="3858000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="15379000" />
+    <option name="totallyTimeSpent" value="18357000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="25" width="1440" height="875" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24351585" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24351585" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -357,21 +482,21 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3298153" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.60026383" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.42480212" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Spring" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.4828496" />
       <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.3298153" />
       <window_info anchor="bottom" id="Java Enterprise" order="12" />
       <window_info anchor="bottom" id="Database Changes" order="13" />
       <window_info anchor="bottom" id="Version Control" order="14" />
-      <window_info anchor="bottom" id="TypeScript" order="15" visible="true" weight="0.18997361" />
+      <window_info anchor="bottom" id="TypeScript" order="15" weight="0.18997361" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -484,13 +609,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/test/TestController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="22" column="36" lean-forward="true" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/src/App.css">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -521,13 +639,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/src/types/api.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="4" selection-start-line="1" selection-start-column="4" selection-end-line="1" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/RsbfifthApplication.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
@@ -535,39 +646,66 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/static/.env.development">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22">
+          <caret line="1" column="18" selection-start-line="1" selection-end-line="1" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="131">
+          <caret line="13" column="23" lean-forward="true" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/static/webpack.config.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+        <state relative-caret-position="275">
+          <caret line="48" column="11" selection-start-line="48" selection-start-column="11" selection-end-line="48" selection-end-column="11" />
           <folding>
             <element signature="e#0#24#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="4" lean-forward="true" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/src/.env.development">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/src/views/Home.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+        <state relative-caret-position="270">
+          <caret line="16" column="49" lean-forward="true" selection-start-line="16" selection-start-column="49" selection-end-line="16" selection-end-column="49" />
           <folding>
             <element signature="e#0#51#0" expanded="true" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/src/types/api.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/web/home/config/CorsConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="34" column="1" selection-start-line="34" selection-start-column="1" selection-end-line="34" selection-end-column="1" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/web/home/src/main/java/com/adam/rsbfifth/test/TestController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="34" column="41" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/public/manifest.json">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
   <component name="masterDetails">

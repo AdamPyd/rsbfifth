@@ -49,7 +49,8 @@ export default {
         }),
         // 注入环境变量到前端代码
         new webpack.DefinePlugin({
-            'window.API_BASE': JSON.stringify(apiBase)
+            'window.API_BASE': JSON.stringify(apiBase),
+            'process.env': JSON.stringify(process.env)
         })
     ],
     devServer: {

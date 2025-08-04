@@ -2,11 +2,14 @@ package com.adam.rsbfifth.test;
 
 import com.adam.rsbfifth.TestUtil;
 import com.adam.rsbfifth.manager.TestManager;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
 
 /**
  * @ClassName TestController
@@ -28,6 +31,9 @@ public class TestController {
         TestUtil.testUtil();
         testManager.testManager();
         System.out.println("testController");
-        return "Hello World~";
+        HashMap<String, String> resultMap = new HashMap<>();
+        resultMap.put("message", "Hello World~");
+        resultMap.put("timestamp", System.currentTimeMillis() + "");
+        return JSONObject.toJSONString(resultMap);
     }
 }
