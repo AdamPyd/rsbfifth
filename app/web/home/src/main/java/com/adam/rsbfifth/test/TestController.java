@@ -4,11 +4,13 @@ import com.adam.rsbfifth.TestUtil;
 import com.adam.rsbfifth.manager.TestManager;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -24,6 +26,9 @@ import java.util.HashMap;
 public class TestController {
     @Autowired
     private TestManager testManager;
+    // 添加配置检查
+    @Autowired
+    private ResourceProperties resourceProperties;
 
     @GetMapping("hello.json")
     @ResponseBody
@@ -35,6 +40,8 @@ public class TestController {
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("message", "Hello World~");
         dataMap.put("timestamp", System.currentTimeMillis() + "");
+        dataMap.put("user.dir", System.getProperty("user.dir"));
+        dataMap.put("静态资源位置", Arrays.asList(resourceProperties.getStaticLocations()).toString());
         resultMap.put("data", dataMap);
         return JSONObject.toJSONString(resultMap);
     }

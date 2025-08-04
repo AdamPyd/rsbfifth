@@ -17,7 +17,7 @@ const apiBase = process.env.REACT_APP_API_BASE || 'http://localhost:80';
 export default {
     entry: './src/index.tsx',
     output: {
-        path: path.resolve(__dirname, '../app/web/home/src/main/resources/static'),
+        path: path.resolve(__dirname, 'build'),
         filename: 'bundle.js',
         publicPath: '/'
     },
