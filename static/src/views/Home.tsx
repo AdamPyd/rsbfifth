@@ -38,7 +38,9 @@ const Home: React.FC = () => {
             style={{ width: 500, margin: '50px auto' }}
         >
             {loading ? (
-                <Spin tip="Loading..." size="large" />
+                <Spin tip="Loading..." size="large" >
+                    loading...
+                </Spin>
             ) : error ? (
                 <div style={{ color: 'red' }}>Error: {error}</div>
             ) : data ? (
