@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Spin } from 'antd';
-import { ApiResponse, SampleData } from '../types/api';
+import { ApiResponse, SampleData } from '../../types/api';
 
 // static/src/views/Home.tsx
 const API_BASE = process.env.REACT_APP_API_BASE || '';

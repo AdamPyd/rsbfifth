@@ -43,6 +43,7 @@ public class TestController {
         dataMap.put("user.dir", System.getProperty("user.dir"));
         dataMap.put("静态资源位置", Arrays.asList(resourceProperties.getStaticLocations()).toString());
         resultMap.put("data", dataMap);
+        resultMap.put("message", "Hello World~");
         return JSONObject.toJSONString(resultMap);
     }
 }
