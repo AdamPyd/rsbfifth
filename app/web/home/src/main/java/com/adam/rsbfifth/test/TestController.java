@@ -31,9 +31,11 @@ public class TestController {
         TestUtil.testUtil();
         testManager.testManager();
         System.out.println("testController");
-        HashMap<String, String> resultMap = new HashMap<>();
-        resultMap.put("message", "Hello World~");
-        resultMap.put("timestamp", System.currentTimeMillis() + "");
+        HashMap<String, Object> resultMap = new HashMap<>();
+        HashMap<String, String> dataMap = new HashMap<>();
+        dataMap.put("message", "Hello World~");
+        dataMap.put("timestamp", System.currentTimeMillis() + "");
+        resultMap.put("data", dataMap);
         return JSONObject.toJSONString(resultMap);
     }
 }
