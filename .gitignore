@@ -87,6 +87,7 @@ out/
 .idea/inspectionProfiles/
 .idea/libraries/
 .idea/caches/
+.idea/workspace.xml
 
 ### 操作系统文件 ###
 .DS_Store
