@@ -1,0 +1,100 @@
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.log
+*.ctxt
+.mtj.tmp/
+*.bak
+*.swp
+*~.nib
+*.original
+hs_err_pid*
+## build/
+out/
+target/
+dist/
+
+### NodeJS ###
+# 依赖目录
+node_modules/
+
+# 日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# 环境变量
+## .env
+## .env.local
+## .env.*.local
+
+# 构建输出
+dist/
+## build/
+coverage/
+.serverless/
+.next/
+.nuxt/
+.cache/
+.vscode-test/
+
+# 包管理器文件
+## package-lock.json
+yarn.lock
+pnpm-lock.yaml
+shrinkwrap.yaml
+
+# 类型Script
+*.tsbuildinfo
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.ipr
+*.iws
+modules.xml
+workspace.xml
+.project
+.settings/
+.idea_modules/
+atlassian-ide-plugin.xml
+compiler.xml
+encodings.xml
+misc.xml
+vcs.xml
+jsLibraryMappings.xml
+dataSources/
+dataSources.local.xml
+dataSources.xml
+sqlDataSources.xml
+dynamic.xml
+uiDesigner.xml
+*.eml
+*.log
+*.pyc
+__pycache__/
+out/
+.idea/*.md
+.idea/*.txt
+.idea/copyright/
+.idea/scopes/
+.idea/shelf/
+.idea/inspectionProfiles/
+.idea/libraries/
+.idea/caches/
+
+### 操作系统文件 ###
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### 编辑器临时文件 ###
+*.swp
+*.swo
+*~
+~$*
