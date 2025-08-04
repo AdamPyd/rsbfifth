@@ -11,5 +11,6 @@
     <file url="file://$PROJECT_DIR$/app/core/model" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/core/service" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/web/home" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/static/public/manifest.json" charset="UTF-8" />
   </component>
 </project>
