@@ -102,6 +102,41 @@
 					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
+			<!-- 标准 Jar 打包 -->
+			<!--<plugin>-->
+				<!--<groupId>org.apache.maven.plugins</groupId>-->
+				<!--<artifactId>maven-jar-plugin</artifactId>-->
+			<!--</plugin>-->
+
+			<!-- Spring Boot 项目需要此插件生成 Fat Jar -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!-- 在打 jar 包时，用于复制父 bundle 中的静态资源，但是似乎 directory 和 outputDirectory 的指向还有点问题 -->
+			<!--<plugin>-->
+				<!--<groupId>org.apache.maven.plugins</groupId>-->
+				<!--<artifactId>maven-resources-plugin</artifactId>-->
+				<!--<version>3.3.0</version>-->
+				<!--<executions>-->
+					<!--<execution>-->
+						<!--<id>copy-resources</id>-->
+						<!--<phase>process-resources</phase>-->
+						<!--<goals>-->
+							<!--<goal>copy-resources</goal>-->
+						<!--</goals>-->
+						<!--<configuration>-->
+							<!--<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>-->
+							<!--<resources>-->
+								<!--<resource>-->
+									<!--<directory>${project.parent.basedir}/static</directory>-->
+									<!--<filtering>false</filtering>-->
+								<!--</resource>-->
+							<!--</resources>-->
+						<!--</configuration>-->
+					<!--</execution>-->
+				<!--</executions>-->
+			<!--</plugin>-->
 		</plugins>
 	</build>
 
