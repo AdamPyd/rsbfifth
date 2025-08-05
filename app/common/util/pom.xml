@@ -11,7 +11,7 @@
 	<groupId>com.adam</groupId>
 	<artifactId>rsbfifth-common-util</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rsbfifth</name>
+	<name>rsbfifth-common-util</name>
 	<packaging>jar</packaging>
 	<description>Demo project for Spring Boot and React</description>
 

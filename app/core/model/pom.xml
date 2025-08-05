@@ -11,7 +11,7 @@
 	<groupId>com.adam</groupId>
 	<artifactId>rsbfifth-core-model</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rsbfifth</name>
+	<name>rsbfifth-core-model</name>
 	<packaging>jar</packaging>
 	<description>Demo project for Spring Boot and React</description>
 
