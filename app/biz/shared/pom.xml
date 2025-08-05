@@ -11,7 +11,7 @@
 	<groupId>com.adam</groupId>
 	<artifactId>rsbfifth-biz-shared</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rsbfifth</name>
+	<name>rsbfifth-biz-shared</name>
 	<packaging>jar</packaging>
 	<description>Demo project for Spring Boot and React</description>
 
@@ -22,7 +22,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.adam</groupId>
-			<artifactId>rsbdecond-core-service</artifactId>
+			<artifactId>rsbfifth-core-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>

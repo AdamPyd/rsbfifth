@@ -11,7 +11,7 @@
 	<groupId>com.adam</groupId>
 	<artifactId>rsbfifth-biz-service-impl</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rsbfifth</name>
+	<name>rsbfifth-biz-service-impl</name>
 	<packaging>jar</packaging>
 	<description>Demo project for Spring Boot and React</description>
 

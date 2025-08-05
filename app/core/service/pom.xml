@@ -9,9 +9,9 @@
 		<relativePath>../../../pom.xml</relativePath>
 	</parent>
 	<groupId>com.adam</groupId>
-	<artifactId>rsbdecond-core-service</artifactId>
+	<artifactId>rsbfifth-core-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rsbdecond</name>
+	<name>rsbfifth-core-service</name>
 	<packaging>jar</packaging>
 	<description>Demo project for Spring Boot and React</description>
 
