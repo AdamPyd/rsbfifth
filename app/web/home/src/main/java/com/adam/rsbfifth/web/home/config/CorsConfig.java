@@ -22,15 +22,19 @@ public class CorsConfig implements WebMvcConfigurer {
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
+        registry.addMapping("/**")
                 // 允许前端开发服务器
                 .allowedOrigins(
                         "http://localhost:3000"
                         , "http://localhost:80"
-                        , "http://localhost",
-                        "http://127.0.0.1:3000"
+                        , "http://localhost"
+                        , "http://127.0.0.1:3000"
                         , "http://127.0.0.1:80"
                         , "http://127.0.0.1"
+                        // 如此这般，前端对静态资源的访问（形如 http://localhost:3000/manifest.json）可以触达
+                        , "http://**:3000"
+                        , "http://**:80"
+                        , "http://**"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

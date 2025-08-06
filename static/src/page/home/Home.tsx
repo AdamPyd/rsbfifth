@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Spin } from 'antd';
 import { ApiResponse, SampleData } from '../../types/api';
+import { apiClient } from '../../utils/api';
 
 // static/src/views/Home.tsx
 const API_BASE = process.env.REACT_APP_API_BASE || '';
@@ -13,7 +14,8 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`${API_BASE}/api/hello.json`);
+                // 使用统一的 API 客户端
+                const response = await apiClient.get('/hello.json');
                 const result: ApiResponse<SampleData> = await response.json();
 
                 if (result.error) {
