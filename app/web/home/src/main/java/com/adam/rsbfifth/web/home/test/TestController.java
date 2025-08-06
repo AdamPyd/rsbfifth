@@ -1,4 +1,4 @@
-package com.adam.rsbfifth.test;
+package com.adam.rsbfifth.web.home.test;
 
 import com.adam.rsbfifth.TestUtil;
 import com.adam.rsbfifth.manager.TestManager;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 /**
  * @ClassName TestController
- * @Package com.adam.rsbfifth.test
+ * @Package com.adam.rsbfifth.web.home.test
  * @Description TODO
  * @Author adam
  * @Date 2020/5/26 20:59
