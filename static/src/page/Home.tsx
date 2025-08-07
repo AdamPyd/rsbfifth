@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Button, Layout, Typography} from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Layout, Typography } from 'antd';
 
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -11,6 +11,8 @@ interface Star {
     brightness: number;
     baseBrightness: number;
     speed: number;
+    type: 'normal' | 'glowing'; // 星星类型：普通或带光晕
+    color: string; // 星星颜色
 }
 
 interface ShootingStar {
@@ -20,7 +22,8 @@ interface ShootingStar {
     length: number;
     speed: number;
     brightness: number;
-    trail: Array<{ x: number; y: number }>;
+    trail: Array<{ x: number; y: number; size: number }>; // 增加轨迹点尺寸
+    trailPoints: number; // 轨迹点计数器
 }
 
 const Home = () => {
@@ -31,18 +34,38 @@ const Home = () => {
     const animationFrameRef = useRef<number>(0);
     const lastShootingStarTimeRef = useRef<number>(0);
 
+    // 十六进制颜色转RGB
+    const hexToRgb = (hex: string): string => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+            ? `${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)}`
+            : '255,255,255';
+    };
+
     // 初始化星星
-    const initStars = (width: number, height: number, count: number = 60) => {
+    const initStars = (width: number, height: number, count: number = 120) => {
         const stars: Star[] = [];
+        const colors = ['#ffffff', '#4facfe', '#00f2fe', '#f6d365', '#a6c0fe'];
+
         for (let i = 0; i < count; i++) {
+            const baseBrightness = Math.random() * 0.5 + 0.5;
+            // 随机类型：10%的概率为带光晕的星星
+            const type = Math.random() < 0.1 ? 'glowing' : 'normal';
+            // 随机选择颜色，亮度高的星星更可能使用非白色
+            let color = '#ffffff';
+            if (baseBrightness > 0.8 && Math.random() < 0.5) {
+                color = colors[Math.floor(Math.random() * (colors.length - 1)) + 1];
+            }
+
             stars.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
                 size: Math.random() * 3 + 0.5,
-                brightness: Math.random() * 0.5 + 0.5,
-                baseBrightness: Math.random() * 0.5 + 0.5,
-                // 闪烁频率减至十分之一：将速度范围调整为原来的1/10
-                speed: Math.random() * 0.002 + 0.0005, // 原来是 Math.random() * 0.02 + 0.005
+                brightness: baseBrightness,
+                baseBrightness,
+                speed: Math.random() * 0.002 + 0.0005,
+                type,
+                color
             });
         }
         starsRef.current = stars;
@@ -84,10 +107,11 @@ const Home = () => {
             x,
             y,
             angle,
-            length: Math.random() * 60 + 30,
+            length: Math.random() * 80 + 40,
             speed: Math.random() * 10 + 5,
             brightness: 1,
-            trail: []
+            trail: [],
+            trailPoints: 0
         });
     };
 
@@ -112,10 +136,52 @@ const Home = () => {
             star.brightness = star.baseBrightness + Math.sin(time * star.speed) * 0.5;
             const brightness = Math.max(0, Math.min(1, star.brightness));
 
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
-            ctx.fill();
+            ctx.save();
+
+            if (star.type === 'normal') {
+                // 普通星星：使用径向渐变创建模糊边缘
+                const gradient = ctx.createRadialGradient(
+                    star.x, star.y, 0,
+                    star.x, star.y, star.size * 1.5
+                );
+                gradient.addColorStop(0, `rgba(${hexToRgb(star.color)}, ${brightness})`);
+                gradient.addColorStop(1, `rgba(${hexToRgb(star.color)}, 0)`);
+
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size * 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+            } else {
+                // 带光晕的星星
+                // 绘制十字光晕（四条线组成）
+                const glowLength = star.size * 4;
+                const glowBrightness = brightness * 0.6;
+
+                ctx.beginPath();
+                ctx.moveTo(star.x - glowLength, star.y);
+                ctx.lineTo(star.x + glowLength, star.y);
+                ctx.moveTo(star.x, star.y - glowLength);
+                ctx.lineTo(star.x, star.y + glowLength);
+
+                ctx.strokeStyle = `rgba(${hexToRgb(star.color)}, ${glowBrightness})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 绘制中心亮点（带模糊效果）
+                const gradient = ctx.createRadialGradient(
+                    star.x, star.y, 0,
+                    star.x, star.y, star.size * 2
+                );
+                gradient.addColorStop(0, `rgba(${hexToRgb(star.color)}, ${brightness})`);
+                gradient.addColorStop(1, `rgba(${hexToRgb(star.color)}, 0)`);
+
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size * 2, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+            }
+
+            ctx.restore();
         });
 
         // 更新和绘制流星
@@ -123,33 +189,87 @@ const Home = () => {
         for (let i = shootingStars.length - 1; i >= 0; i--) {
             const star = shootingStars[i];
 
-            // 添加当前位置到轨迹
-            star.trail.push({ x: star.x, y: star.y });
-            if (star.trail.length > star.length) {
-                star.trail.shift();
+            // 每3帧添加一个新的轨迹点（减少点密度）
+            star.trailPoints++;
+            if (star.trailPoints >= 3) {
+                star.trailPoints = 0;
+                // 添加当前位置到轨迹（带尺寸信息）
+                star.trail.push({
+                    x: star.x,
+                    y: star.y,
+                    size: Math.min(3, star.brightness * 4) // 头部大尾部小
+                });
+                if (star.trail.length > star.length) {
+                    star.trail.shift();
+                }
             }
 
             // 更新位置
             star.x += Math.cos(star.angle) * star.speed;
             star.y += Math.sin(star.angle) * star.speed;
 
-            // 绘制轨迹
-            ctx.beginPath();
-            ctx.moveTo(star.trail[0].x, star.trail[0].y);
+            // 优化1: 使用线段连接轨迹点，形成连续轨迹
+            if (star.trail.length >= 2) {
+                ctx.beginPath();
+                ctx.moveTo(star.trail[0].x, star.trail[0].y);
 
-            for (let j = 1; j < star.trail.length; j++) {
-                const alpha = j / star.trail.length;
-                ctx.lineTo(star.trail[j].x, star.trail[j].y);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * star.brightness})`;
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                // 绘制平滑的轨迹线段
+                for (let j = 1; j < star.trail.length; j++) {
+                    const prevPoint = star.trail[j-1];
+                    const point = star.trail[j];
+
+                    // 计算当前点的透明度（越靠近尾部透明度越低）
+                    const alpha = (j / star.trail.length) * star.brightness;
+
+                    // 优化2: 使用线段连接相邻点
+                    ctx.lineTo(point.x, point.y);
+
+                    // 设置线段样式（渐变宽度和透明度）
+                    ctx.lineWidth = prevPoint.size * (1 - j/star.trail.length) * 0.8 + 0.5;
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                    ctx.stroke();
+
+                    // 开始新的子路径
+                    ctx.beginPath();
+                    ctx.moveTo(point.x, point.y);
+                }
             }
 
-            // 绘制头部
+            // 优化3: 在轨迹点上添加光晕效果增强连贯性
+            for (let j = 0; j < star.trail.length; j++) {
+                const point = star.trail[j];
+                const alpha = (j / star.trail.length) * star.brightness * 0.7; // 稍低的透明度
+                const size = point.size * (1 - j/star.trail.length) * 0.8 + 0.5;
+
+                ctx.save();
+                const gradient = ctx.createRadialGradient(
+                    point.x, point.y, 0,
+                    point.x, point.y, size
+                );
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 绘制流星头部（更亮的中心）
+            ctx.save();
+            const headGradient = ctx.createRadialGradient(
+                star.x, star.y, 0,
+                star.x, star.y, 4
+            );
+            headGradient.addColorStop(0, `rgba(255, 255, 255, ${star.brightness})`);
+            headGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
             ctx.beginPath();
-            ctx.arc(star.x, star.y, 2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${star.brightness})`;
+            ctx.arc(star.x, star.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = headGradient;
             ctx.fill();
+            ctx.restore();
 
             // 减少亮度
             star.brightness -= 0.01;
@@ -245,7 +365,6 @@ const Home = () => {
                         DISCOVERY
                     </Text>
                     <div style={{ flex: 1 }} />
-                    {/*{<Button type="primary" ghost>登录</Button>}*/}
                 </div>
             </Header>
 
@@ -262,34 +381,8 @@ const Home = () => {
                         marginBottom: 24,
                         textShadow: '0 0 10px rgba(255, 255, 255, 0.5)'
                     }}>
-                        探索浩瀚星空
+                        探索
                     </Title>
-                    <Text style={{
-                        color: 'rgba(255, 255, 255, 0.85)',
-                        fontSize: '1.2rem',
-                        display: 'block',
-                        maxWidth: 600,
-                        margin: '0 auto 40px',
-                        lineHeight: 1.7
-                    }}>
-                        探索，发现未知
-                    </Text>
-                    {/*<div>
-                        <Button
-                            type="primary"
-                            size="large"
-                            style={{ marginRight: 16, padding: '0 30px', height: 46 }}
-                        >
-                            开始探索
-                        </Button>
-                        <Button
-                            ghost
-                            size="large"
-                            style={{ padding: '0 30px', height: 46, borderColor: '#fff', color: '#fff' }}
-                        >
-                            了解更多
-                        </Button>
-                    </div>*/}
                 </div>
             </Content>
 
