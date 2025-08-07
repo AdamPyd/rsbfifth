@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Layout, Typography, Button } from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, Layout, Typography} from 'antd';
 
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -23,7 +23,7 @@ interface ShootingStar {
     trail: Array<{ x: number; y: number }>;
 }
 
-const Home: NextPage = () => {
+const Home = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const starsRef = useRef<Star[]>([]);
@@ -41,7 +41,8 @@ const Home: NextPage = () => {
                 size: Math.random() * 3 + 0.5,
                 brightness: Math.random() * 0.5 + 0.5,
                 baseBrightness: Math.random() * 0.5 + 0.5,
-                speed: Math.random() * 0.02 + 0.005,
+                // 闪烁频率减至十分之一：将速度范围调整为原来的1/10
+                speed: Math.random() * 0.002 + 0.0005, // 原来是 Math.random() * 0.02 + 0.005
             });
         }
         starsRef.current = stars;
@@ -241,10 +242,10 @@ const Home: NextPage = () => {
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent'
                     }}>
-                        STARGAZE
+                        DISCOVERY
                     </Text>
                     <div style={{ flex: 1 }} />
-                    <Button type="primary" ghost>登录</Button>
+                    {/*{<Button type="primary" ghost>登录</Button>}*/}
                 </div>
             </Header>
 
@@ -271,9 +272,9 @@ const Home: NextPage = () => {
                         margin: '0 auto 40px',
                         lineHeight: 1.7
                     }}>
-                        在这里，您可以发现宇宙的奥秘，探索遥远的星系，体验星际旅行的魅力
+                        探索，发现未知
                     </Text>
-                    <div>
+                    {/*<div>
                         <Button
                             type="primary"
                             size="large"
@@ -288,7 +289,7 @@ const Home: NextPage = () => {
                         >
                             了解更多
                         </Button>
-                    </div>
+                    </div>*/}
                 </div>
             </Content>
 
@@ -298,7 +299,7 @@ const Home: NextPage = () => {
                 borderTop: '1px solid rgba(255, 255, 255, 0.1)',
                 color: 'rgba(255, 255, 255, 0.6)'
             }}>
-                © {new Date().getFullYear()} 星空探索 — 发现宇宙之美
+                © {new Date().getFullYear()} 去探索 — 去发现
             </Footer>
         </Layout>
     );
