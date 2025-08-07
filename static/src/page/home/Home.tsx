@@ -15,8 +15,7 @@ const Home: React.FC = () => {
         const fetchData = async () => {
             try {
                 // 使用统一的 API 客户端
-                const response = await apiClient.get('/hello.json');
-                const result: ApiResponse<SampleData> = await response.json();
+                const result: ApiResponse<SampleData> = await apiClient.get('/hello.json');
 
                 if (result.error) {
                     setError(result.error);
