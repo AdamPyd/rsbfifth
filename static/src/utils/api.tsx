@@ -19,6 +19,9 @@ export const apiClient = {
 
         // 获取主机名（例如：www.example.com）
         const hostname = window.location.hostname;
+        console.log('protocol:' + protocol);
+        console.log('hostname:' + hostname);
+        console.log('endpoint:' + endpoint);
 
         // // 获取端口号（如果有的话）
         // var port = window.location.port;

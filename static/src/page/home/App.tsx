@@ -7,7 +7,7 @@ const App: React.FC = () => {
   return (
       <div style={{ padding: 20 }}>
         <Routes>
-          <Route path="/" element={<TestPage />} />
+            <Route path="/" element={<TestPage />} />
           <Route path="/home" element={<Home />} />
         </Routes>
       </div>
