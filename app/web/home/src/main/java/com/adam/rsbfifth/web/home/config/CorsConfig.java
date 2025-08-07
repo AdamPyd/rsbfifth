@@ -3,6 +3,7 @@ package com.adam.rsbfifth.web.home.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -26,8 +27,12 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:3000"
                         , "http://localhost:80"
-                        , "http://localhost",
-                        "http://**:3000"
+                        , "http://localhost"
+                        , "http://127.0.0.1:3000"
+                        , "http://127.0.0.1:80"
+                        , "http://127.0.0.1"
+                        // 如此这般，前端对静态资源的访问（形如 http://localhost:3000/manifest.json）可以触达
+                        , "http://**:3000"
                         , "http://**:80"
                         , "http://**"
                 )
@@ -37,17 +42,15 @@ public class CorsConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
-//    /**
-//     * 处理打包后，web-home bundle 找不到父 Bundle 中的静态资源的问题。故这里要扫描静态资源
-//     * @param registry
-//     */
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        // 添加父模块资源路径
-//        registry.addResourceHandler("/**")
-//                .addResourceLocations(
-//                        "classpath:/static/",
-//                        "file:../parent-module/src/main/resources/static/" // 相对路径
-//                );
-//    }
+    /**
+     * 添加全局路由回退配置，将所有前端路由请求指向index.html，
+     * 防止非 {host}:{port}/ 请求映射不到前端 index.html 文件，造成url 路由失效
+     * @param registry
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        // 匹配所有前端路由路径
+        registry.addViewController("/{path:[^\\.]*}")
+                .setViewName("forward:/index.html");
+    }
 }
