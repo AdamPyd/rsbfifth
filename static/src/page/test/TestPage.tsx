@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, message, Card, Spin } from 'antd';
-import { apiClient } from '../utils/api';
+import { apiClient } from '../../utils/api';
 
 const TestPage = () => {
     const [response, setResponse] = useState('');

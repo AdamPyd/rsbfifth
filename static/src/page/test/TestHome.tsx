@@ -3,10 +3,10 @@ import { Card, Spin } from 'antd';
 import { ApiResponse, SampleData } from '../../types/api';
 import { apiClient } from '../../utils/api';
 
-// static/src/views/Home.tsx
+// static/src/views/TestHomeHome.tsx
 const API_BASE = process.env.REACT_APP_API_BASE || '';
 
-const Home: React.FC = () => {
+const TestHome: React.FC = () => {
     const [data, setData] = useState<SampleData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -57,4 +57,4 @@ const Home: React.FC = () => {
     );
 };
 
-export default Home;
+export default TestHome;

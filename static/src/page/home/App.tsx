@@ -1,14 +1,16 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Home from './Home';
-import TestPage from '../../page/TestPage';
+import TestHome from '../test/TestHome';
+import TestPage from '../test/TestPage';
+import Home from '../Home';
 
 const App: React.FC = () => {
   return (
       <div style={{ padding: 20 }}>
         <Routes>
-            <Route path="/" element={<TestPage />} />
-            <Route path="/home" element={<Home />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/testPage" element={<TestPage />} />
+            <Route path="/home" element={<TestHome />} />
         </Routes>
       </div>
   );
