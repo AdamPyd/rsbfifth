@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 import dotenv from 'dotenv';
+import CopyPlugin from 'copy-webpack-plugin'; // 添加这行导入
 
 // 解决 __dirname 在 ES 模块中的问题
 const __filename = fileURLToPath(import.meta.url);
@@ -41,19 +42,6 @@ export default {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
             },
-            {
-                test: /\.(png|jpe?g|gif)$/i, // 匹配图片文件
-                use: [
-                    {
-                        loader: "file-loader",
-                        options: {
-                            name: "[name].[ext]", // 保留原始文件名
-                            outputPath: "textures/", // 输出到 build/textures/
-                            publicPath: "/assets/public/textures/", // 引用路径为 /textures/xxx.png
-                        },
-                    },
-                ],
-            },
         ]
     },
     plugins: [
@@ -64,12 +52,36 @@ export default {
         new webpack.DefinePlugin({
             'window.API_BASE': JSON.stringify(apiBase),
             'process.env': JSON.stringify(process.env)
-        })
+        }),
+        // 添加静态文件复制插件
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: 'public/textures',
+                    to: 'textures',
+                    noErrorOnMissing: true
+                },
+                {
+                    from: 'public',
+                    to: '.',
+                    globOptions: {
+                        ignore: ['**/index.html'] // 忽略HTML文件
+                    }
+                }
+            ]
+        }),
     ],
     devServer: {
-        static: {
-            directory: path.join(__dirname, 'dist'),
-        },
+        static: [
+            {
+                directory: path.join(__dirname, 'public'), // 新增public目录静态服务
+                publicPath: '/',
+                watch: true
+            },
+            {
+                directory: path.join(__dirname, 'dist'),
+            }
+        ],
         port: 3000,
         historyApiFallback: {
             disableDotRule: true,

@@ -19,10 +19,10 @@ const EarthModel: React.FC<{
 
     // 加载纹理
     const [earthTexture, bumpMap, specularMap, cloudTexture] = useTexture([
-        '/public/textures/earth_daymap.png', // 地球纹理
-        '/public/textures/earth_bump.png',   // 凹凸贴图
-        '/public/textures/earth_specular.png', // 高光贴图
-        '/public/textures/earth_clouds.png'  // 云层纹理
+        '/textures/earth_daymap.png', // 地球纹理
+        '/textures/earth_bump.png',   // 凹凸贴图
+        '/textures/earth_specular.png', // 高光贴图
+        '/textures/earth_clouds.png'  // 云层纹理
     ]);
 
     // 初始动画效果

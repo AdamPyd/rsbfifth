@@ -132,10 +132,6 @@
 									<directory>${project.parent.basedir}/static/build</directory>
 									<filtering>false</filtering>
 								</resource>
-								<resource>
-									<directory>${project.parent.basedir}/static/public</directory>
-									<filtering>false</filtering>
-								</resource>
 							</resources>
 						</configuration>
 					</execution>
