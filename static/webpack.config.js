@@ -40,7 +40,20 @@ export default {
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
-            }
+            },
+            {
+                test: /\.(png|jpe?g|gif)$/i, // 匹配图片文件
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "[name].[ext]", // 保留原始文件名
+                            outputPath: "textures/", // 输出到 build/textures/
+                            publicPath: "/assets/public/textures/", // 引用路径为 /textures/xxx.png
+                        },
+                    },
+                ],
+            },
         ]
     },
     plugins: [
