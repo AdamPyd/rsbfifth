@@ -17,11 +17,10 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
     const earthRef = useRef<THREE.Mesh>(null);
     const cloudRef = useRef<THREE.Mesh>(null);
 
-    // 加载纹理 - 添加错误处理和回退
+    // 加载纹理
     const textures = useTexture([
-            '/textures/earth_daymap.png', // 使用更常见的 jpg 格式
-            '/textures/earth_bump.png',
-            '/textures/earth_specular.png',
+            '/textures/earth_daymap.png',
+            '/textures/earth_specular.png', // 移除了法线贴图
             '/textures/earth_clouds.png'
         ],
         (loadedTextures) => {
@@ -31,7 +30,7 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
             console.error('纹理加载失败:', error);
         });
 
-    const [earthTexture, bumpMap, specularMap, cloudTexture] = textures;
+    const [earthTexture, specularMap, cloudTexture] = textures;
 
     // 初始动画效果
     useEffect(() => {
@@ -77,11 +76,10 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
                 <sphereGeometry args={[1, 64, 64]} />
                 <meshPhongMaterial
                     map={earthTexture}
-                    bumpMap={bumpMap}
-                    bumpScale={0.1} // 增加凹凸效果
+                    // 移除了法线贴图
                     specularMap={specularMap}
-                    specular={new THREE.Color(0x333333)} // 更明显的高光
-                    shininess={10} // 增加光泽度
+                    specular={new THREE.Color(0x333333)}
+                    shininess={10}
                     side={THREE.FrontSide}
                 />
             </mesh>
@@ -92,16 +90,16 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
                 <meshPhongMaterial
                     map={cloudTexture}
                     transparent={true}
-                    opacity={0.6} // 增加云层可见度
+                    opacity={0.6}
                     depthWrite={false}
                     side={THREE.DoubleSide}
                 />
             </mesh>
 
-            {/* 环境光 - 增加强度 */}
+            {/* 环境光 */}
             <ambientLight intensity={0.5} color={0xffffff} />
 
-            {/* 平行光 - 调整位置和强度 */}
+            {/* 平行光 */}
             <directionalLight
                 position={[10, 5, 10]}
                 intensity={2}
@@ -118,9 +116,10 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
 interface EarthSceneProps {
     onLoaded?: () => void;
     initialScale?: number;
+    showStars?: boolean; // 新增：控制是否显示星空背景
 }
 
-const EarthScene: React.FC<EarthSceneProps> = ({ onLoaded, initialScale = 1 }) => {
+const EarthScene: React.FC<EarthSceneProps> = ({ onLoaded, initialScale = 1, showStars = true }) => {
     const [scale, setScale] = useState<number>(initialScale);
     const controlsRef = useRef<any>(null);
 
@@ -140,7 +139,7 @@ const EarthScene: React.FC<EarthSceneProps> = ({ onLoaded, initialScale = 1 }) =
                 console.log('WebGL上下文已创建');
             }}
         >
-            {/* 相机 - 调整位置 */}
+            {/* 相机 */}
             <PerspectiveCamera
                 makeDefault
                 position={[0, 0, 5]}
@@ -166,16 +165,18 @@ const EarthScene: React.FC<EarthSceneProps> = ({ onLoaded, initialScale = 1 }) =
                 autoRotateSpeed={0.5}
             />
 
-            {/* 星空背景 */}
-            <ThreeStars
-                radius={150}
-                depth={100}
-                count={8000}
-                factor={6}
-                saturation={0}
-                fade
-                speed={0.5}
-            />
+            {/* 条件渲染星空背景 */}
+            {showStars && (
+                <ThreeStars
+                    radius={150}
+                    depth={100}
+                    count={8000}
+                    factor={6}
+                    saturation={0}
+                    fade
+                    speed={0.5}
+                />
+            )}
 
             {/* 添加坐标轴辅助 */}
             <axesHelper args={[5]} />
@@ -187,10 +188,15 @@ interface EarthProps {
     initialScale?: number;
     onLoaded?: () => void;
     style?: React.CSSProperties;
+    onBackToHome?: () => void; // 新增：返回首页的回调函数
 }
 
-const Earth: React.FC<EarthProps> = ({ initialScale = 0.01, onLoaded, style }) => {
-    // 添加容器尺寸检查
+const Earth: React.FC<EarthProps> = ({
+                                         initialScale = 0.01,
+                                         onLoaded,
+                                         style,
+                                         onBackToHome // 新增
+                                     }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -209,14 +215,42 @@ const Earth: React.FC<EarthProps> = ({ initialScale = 0.01, onLoaded, style }) =
                 position: 'fixed',
                 top: 0,
                 left: 0,
-                width: '100vw', // 使用视口单位
+                width: '100vw',
                 height: '100vh',
                 zIndex: 10,
-                backgroundColor: 'rgba(0, 0, 0, 0.1)', // 临时背景用于调试
+                backgroundColor: 'black', // 使用黑色背景
                 ...style
             }}
         >
-            <EarthScene initialScale={initialScale} onLoaded={onLoaded} />
+            {/* 添加返回按钮 */}
+            {onBackToHome && (
+                <button
+                    onClick={onBackToHome}
+                    style={{
+                        position: 'absolute',
+                        top: 20,
+                        left: 20,
+                        padding: '10px 15px',
+                        background: 'rgba(0, 0, 0, 0.5)',
+                        color: 'white',
+                        border: '0px solid rgba(255, 255, 255, 0.3)',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        zIndex: 20,
+                        backdropFilter: 'blur(10px)',
+                        fontSize: '16px',
+                        fontWeight: 'bold'
+                    }}
+                >
+
+                </button>
+            )}
+
+            <EarthScene
+                initialScale={initialScale}
+                onLoaded={onLoaded}
+                showStars={false} // 禁用星空背景
+            />
         </div>
     );
 };

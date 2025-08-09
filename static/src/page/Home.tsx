@@ -2,12 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Layout, Typography } from 'antd';
 import Earth from '../components/Earth';
 
-// 正确解构 Layout 的子组件
 const { Header, Footer } = Layout;
 const { Title, Text } = Typography;
-
-// 添加 Content 组件的类型定义
 const Content = Layout.Content;
+
 
 interface Star {
     x: number;
@@ -39,6 +37,7 @@ const Home = () => {
     const shootingStarsRef = useRef<ShootingStar[]>([]);
     const animationFrameRef = useRef<number>(0);
     const lastShootingStarTimeRef = useRef<number>(0);
+
 
     const [showEarth, setShowEarth] = useState(false);
     const [earthPosition, setEarthPosition] = useState({ x: 0, y: 0 });
@@ -353,6 +352,14 @@ const Home = () => {
         }
     }, [earthLoaded]);
 
+    // 修改：添加返回首页的回调
+    const handleBackToHome = () => {
+        setShowEarth(false);
+        setTitleVisible(true);
+        setEarthLoaded(false);
+        setEarthScale(0.001);
+    };
+
     return (
         <Layout style={{ minHeight: '100vh', background: 'transparent' }}>
             <canvas
@@ -371,6 +378,7 @@ const Home = () => {
                 <Earth
                     initialScale={earthScale}
                     onLoaded={() => setEarthLoaded(true)}
+                    onBackToHome={handleBackToHome} // 新增：传递回调
                     style={{
                         transform: `translate(${earthPosition.x}px, ${earthPosition.y}px)`,
                         transformOrigin: 'center',
@@ -398,19 +406,25 @@ const Home = () => {
                     alignItems: 'center',
                     height: '100%'
                 }}>
-                    <Text style={{
-                        color: '#fff',
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        background: 'linear-gradient(45deg, #4facfe, #00f2fe)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent'
-                    }}>
+                    {/* 修改：添加点击事件返回首页 */}
+                    <Text
+                        onClick={showEarth ? handleBackToHome : undefined}
+                        style={{
+                            color: '#fff',
+                            fontSize: 20,
+                            fontWeight: 'bold',
+                            background: 'linear-gradient(45deg, #4facfe, #00f2fe)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            cursor: showEarth ? 'pointer' : 'default' // 仅在显示地球时可点击
+                        }}
+                    >
                         DISCOVERY
                     </Text>
                     <div style={{ flex: 1 }} />
                 </div>
             </Header>
+
 
             {/* 使用 Content 组件 */}
             <Content style={{ padding: '0 50px', marginTop: 64 }}>
