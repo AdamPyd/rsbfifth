@@ -18,19 +18,11 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
     const cloudRef = useRef<THREE.Mesh>(null);
 
     // 加载纹理
-    const textures = useTexture([
-            '/textures/earth_daymap.png',
-            '/textures/earth_specular.png', // 移除了法线贴图
-            '/textures/earth_clouds.png'
-        ],
-        (loadedTextures) => {
-            console.log('纹理加载成功:', loadedTextures);
-        },
-        (error) => {
-            console.error('纹理加载失败:', error);
-        });
-
-    const [earthTexture, specularMap, cloudTexture] = textures;
+    const [earthTexture, specularMap, cloudTexture] = useTexture([
+        '/textures/earth_daymap.png',
+        '/textures/earth_specular.png',
+        '/textures/earth_clouds.png'
+    ]);
 
     // 初始动画效果
     useEffect(() => {
@@ -50,8 +42,6 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
 
                     if (Math.abs(targetScale - newScale) > 0.01) {
                         requestAnimationFrame(animate);
-                    } else {
-                        console.log('地球动画完成');
                     }
                 }
             };
@@ -76,7 +66,6 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
                 <sphereGeometry args={[1, 64, 64]} />
                 <meshPhongMaterial
                     map={earthTexture}
-                    // 移除了法线贴图
                     specularMap={specularMap}
                     specular={new THREE.Color(0x333333)}
                     shininess={10}
@@ -116,7 +105,7 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
 interface EarthSceneProps {
     onLoaded?: () => void;
     initialScale?: number;
-    showStars?: boolean; // 新增：控制是否显示星空背景
+    showStars?: boolean;
 }
 
 const EarthScene: React.FC<EarthSceneProps> = ({ onLoaded, initialScale = 1, showStars = true }) => {
@@ -124,7 +113,6 @@ const EarthScene: React.FC<EarthSceneProps> = ({ onLoaded, initialScale = 1, sho
     const controlsRef = useRef<any>(null);
 
     useEffect(() => {
-        console.log('地球缩放:', scale);
         if (scale > 0.5 && onLoaded) {
             onLoaded();
         }
@@ -135,8 +123,6 @@ const EarthScene: React.FC<EarthSceneProps> = ({ onLoaded, initialScale = 1, sho
             style={{ background: 'transparent' }}
             onCreated={({ gl }) => {
                 gl.setClearColor(0x000000, 0); // 透明背景
-                gl.setPixelRatio(window.devicePixelRatio);
-                console.log('WebGL上下文已创建');
             }}
         >
             {/* 相机 */}
@@ -177,9 +163,6 @@ const EarthScene: React.FC<EarthSceneProps> = ({ onLoaded, initialScale = 1, sho
                     speed={0.5}
                 />
             )}
-
-            {/* 添加坐标轴辅助 */}
-            <axesHelper args={[5]} />
         </Canvas>
     );
 };
@@ -188,29 +171,17 @@ interface EarthProps {
     initialScale?: number;
     onLoaded?: () => void;
     style?: React.CSSProperties;
-    onBackToHome?: () => void; // 新增：返回首页的回调函数
+    onBackToHome?: () => void;
 }
 
 const Earth: React.FC<EarthProps> = ({
                                          initialScale = 0.01,
                                          onLoaded,
                                          style,
-                                         onBackToHome // 新增
+                                         onBackToHome
                                      }) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (containerRef.current) {
-            console.log('容器尺寸:', {
-                width: containerRef.current.clientWidth,
-                height: containerRef.current.clientHeight
-            });
-        }
-    }, []);
-
     return (
         <div
-            ref={containerRef}
             style={{
                 position: 'fixed',
                 top: 0,
@@ -218,7 +189,7 @@ const Earth: React.FC<EarthProps> = ({
                 width: '100vw',
                 height: '100vh',
                 zIndex: 10,
-                backgroundColor: 'black', // 使用黑色背景
+                backgroundColor: 'black',
                 ...style
             }}
         >
@@ -242,14 +213,13 @@ const Earth: React.FC<EarthProps> = ({
                         fontWeight: 'bold'
                     }}
                 >
-
                 </button>
             )}
 
             <EarthScene
                 initialScale={initialScale}
                 onLoaded={onLoaded}
-                showStars={false} // 禁用星空背景
+                showStars={false}
             />
         </div>
     );
