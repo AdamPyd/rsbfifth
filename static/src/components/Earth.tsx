@@ -19,9 +19,9 @@ const EarthModel: React.FC<EarthModelProps> = ({ setScale = () => {}, initialSca
 
     // 加载纹理
     const [earthTexture, specularMap, cloudTexture] = useTexture([
-        '/textures/earth_daymap.png',
-        '/textures/earth_specular.png',
-        '/textures/earth_clouds.png'
+        '/textures/earth_daymap.webp',
+        '/textures/earth_specular.webp',
+        '/textures/earth_clouds.webp'
     ]);
 
     // 初始动画效果
