@@ -1,129 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Layout, Typography, Dropdown, Modal, Button, Form, Input, Avatar, message } from 'antd';
-import { UserOutlined, LoginOutlined, LogoutOutlined, UserSwitchOutlined } from '@ant-design/icons';
-import Earth from '../components/Earth';
+import { Layout, Typography } from 'antd';
+import { UserOutlined, LoginOutlined, LogoutOutlined } from '@ant-design/icons';
+import Earth from '../components/earth/Earth';
+import { useAuth } from '../hooks/useAuth';
+import { Star, ShootingStar } from './Home';
+import LayoutComponent from '../Components/Layout/Layout';
+import UserIndex from '../Components/User/index/UserIndex';
+import LoginModal from '../Components/User/loginorregister/UserLoginOrRegister';
+import AccountModal from '../Components/User/info/UserInfo';
+import './Home.css';
 
-const { Header, Footer } = Layout;
-const { Title, Text } = Typography;
-const Content = Layout.Content;
-
-// 用户状态管理（模拟）
-const useAuth = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userInfo, setUserInfo] = useState(null);
-
-    const login = (values) => {
-        // 模拟登录成功
-        setIsLoggedIn(true);
-        setUserInfo({ username: values.username });
-        message.success('登录成功');
-    };
-
-    const logout = () => {
-        setIsLoggedIn(false);
-        setUserInfo(null);
-        message.success('已退出登录');
-    };
-
-    return { isLoggedIn, userInfo, login, logout };
-};
-
-// 登录模态窗组件
-const LoginModal = ({ visible, onCancel, onLogin }) => {
-    const [form] = Form.useForm();
-
-    const handleSubmit = (values) => {
-        onLogin(values);
-        form.resetFields();
-        onCancel();
-    };
-
-    return (
-        <Modal
-            title="用户登录"
-            open={visible}
-            onCancel={onCancel}
-            footer={null}
-            width={350}
-        >
-            <Form
-                form={form}
-                layout="vertical"
-                onFinish={handleSubmit}
-            >
-                <Form.Item
-                    label="用户名"
-                    name="username"
-                    rules={[{ required: true, message: '请输入用户名' }]}
-                >
-                    <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
-                </Form.Item>
-                <Form.Item
-                    label="密码"
-                    name="password"
-                    rules={[{ required: true, message: '请输入密码' }]}
-                >
-                    <Input.Password placeholder="请输入密码" />
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" block>
-                        登录
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
-    );
-};
-
-// 账户详情模态窗组件
-const AccountModal = ({ visible, onCancel, userInfo }) => {
-    return (
-        <Modal
-            title="账户详情"
-            open={visible}
-            onCancel={onCancel}
-            footer={[
-                <Button key="close" onClick={onCancel}>
-                    关闭
-                </Button>
-            ]}
-            width={400}
-        >
-            <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                <Avatar size={64} icon={<UserOutlined />} style={{ marginBottom: 16 }} />
-                <div>
-                    <Text strong>用户名: </Text>
-                    <Text>{userInfo?.username || '未命名用户'}</Text>
-                </div>
-                <div style={{ marginTop: 8 }}>
-                    <Text type="secondary">这是您的账户信息页面</Text>
-                </div>
-            </div>
-        </Modal>
-    );
-};
-
-interface Star {
-    x: number;
-    y: number;
-    size: number;
-    brightness: number;
-    baseBrightness: number;
-    speed: number;
-    type: 'normal' | 'glowing';
-    color: string;
-}
-
-interface ShootingStar {
-    x: number;
-    y: number;
-    angle: number;
-    length: number;
-    speed: number;
-    brightness: number;
-    trail: Array<{ x: number; y: number; size: number }>;
-    trailPoints: number;
-}
+const { Content } = Layout;
+const { Title } = Typography;
 
 const Home = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -461,41 +349,18 @@ const Home = () => {
 
     // 处理退出登录
     const handleLogout = () => {
-        Modal.confirm({
-            title: '确认退出',
-            content: '您确定要退出登录吗？',
-            okText: '确定',
-            cancelText: '取消',
-            onOk: () => {
-                logout();
-            }
+        import('antd').then(({ Modal }) => {
+            Modal.confirm({
+                title: '确认退出',
+                content: '您确定要退出登录吗？',
+                okText: '确定',
+                cancelText: '取消',
+                onOk: () => {
+                    logout();
+                }
+            });
         });
     };
-
-    // 用户下拉菜单项
-    const userMenuItems = isLoggedIn
-        ? [
-            {
-                key: 'account',
-                icon: <UserSwitchOutlined />,
-                label: '账户详情',
-                onClick: () => setAccountModalVisible(true)
-            },
-            {
-                key: 'logout',
-                icon: <LogoutOutlined />,
-                label: '退出登录',
-                onClick: handleLogout
-            }
-        ]
-        : [
-            {
-                key: 'login',
-                icon: <LoginOutlined />,
-                label: '登录',
-                onClick: () => setLoginModalVisible(true)
-            }
-        ];
 
     return (
         <Layout style={{ minHeight: '100vh', background: 'transparent' }}>
@@ -532,53 +397,35 @@ const Home = () => {
                 />
             )}
 
-            <Header style={{
-                background: 'rgba(0, 0, 0, 0.3)',
-                padding: '0 24px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                zIndex: 20
-            }}>
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    height: '100%'
-                }}>
-                    <Text
-                        onClick={showEarth ? handleBackToHome : undefined}
-                        style={{
-                            color: '#fff',
-                            fontSize: 20,
-                            fontWeight: 'bold',
-                            background: 'linear-gradient(45deg, #4facfe, #00f2fe)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            cursor: showEarth ? 'pointer' : 'default'
-                        }}
-                    >
-                        DISCOVERY
-                    </Text>
-                    <div style={{ flex: 1 }} />
-
-                    {/* 添加用户头像下拉菜单 */}
-                    <Dropdown
-                        menu={{ items: userMenuItems }}
-                        placement="bottomRight"
-                        trigger={['hover']}
-                    >
-                        <div style={{
-                            cursor: 'pointer',
-                            padding: '8px',
-                            borderRadius: '50%',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                            <UserOutlined style={{ color: '#fff', fontSize: '18px' }} />
-                        </div>
-                    </Dropdown>
-                </div>
-            </Header>
+            <LayoutComponent
+                showEarth={showEarth}
+                handleBackToHome={handleBackToHome}
+                userMenuItems={
+                    isLoggedIn
+                        ? [
+                            {
+                                key: 'account',
+                                icon: <UserOutlined />,
+                                label: '账户详情',
+                                onClick: () => setAccountModalVisible(true)
+                            },
+                            {
+                                key: 'logout',
+                                icon: <LogoutOutlined />,
+                                label: '退出登录',
+                                onClick: handleLogout
+                            }
+                        ]
+                        : [
+                            {
+                                key: 'login',
+                                icon: <LoginOutlined />,
+                                label: '登录',
+                                onClick: () => setLoginModalVisible(true)
+                            }
+                        ]
+                }
+            />
 
             <Content style={{ padding: '0 50px', marginTop: 64 }}>
                 <div style={{
@@ -617,16 +464,6 @@ const Home = () => {
                     </Title>
                 </div>
             </Content>
-
-            <Footer style={{
-                textAlign: 'center',
-                background: 'rgba(0, 0, 0, 0.3)',
-                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                color: 'rgba(255, 255, 255, 0.6)',
-                zIndex: 20
-            }}>
-                © {new Date().getFullYear()} 让思想的脚印延伸向视距外
-            </Footer>
 
             {/* 登录模态窗 */}
             <LoginModal
