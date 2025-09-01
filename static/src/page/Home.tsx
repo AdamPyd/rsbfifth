@@ -1,11 +1,107 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Layout, Typography } from 'antd';
+import { Layout, Typography, Dropdown, Modal, Button, Form, Input, Avatar, message } from 'antd';
+import { UserOutlined, LoginOutlined, LogoutOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import Earth from '../components/Earth';
 
 const { Header, Footer } = Layout;
 const { Title, Text } = Typography;
 const Content = Layout.Content;
 
+// 用户状态管理（模拟）
+const useAuth = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userInfo, setUserInfo] = useState(null);
+
+    const login = (values) => {
+        // 模拟登录成功
+        setIsLoggedIn(true);
+        setUserInfo({ username: values.username });
+        message.success('登录成功');
+    };
+
+    const logout = () => {
+        setIsLoggedIn(false);
+        setUserInfo(null);
+        message.success('已退出登录');
+    };
+
+    return { isLoggedIn, userInfo, login, logout };
+};
+
+// 登录模态窗组件
+const LoginModal = ({ visible, onCancel, onLogin }) => {
+    const [form] = Form.useForm();
+
+    const handleSubmit = (values) => {
+        onLogin(values);
+        form.resetFields();
+        onCancel();
+    };
+
+    return (
+        <Modal
+            title="用户登录"
+            open={visible}
+            onCancel={onCancel}
+            footer={null}
+            width={350}
+        >
+            <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleSubmit}
+            >
+                <Form.Item
+                    label="用户名"
+                    name="username"
+                    rules={[{ required: true, message: '请输入用户名' }]}
+                >
+                    <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
+                </Form.Item>
+                <Form.Item
+                    label="密码"
+                    name="password"
+                    rules={[{ required: true, message: '请输入密码' }]}
+                >
+                    <Input.Password placeholder="请输入密码" />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" block>
+                        登录
+                    </Button>
+                </Form.Item>
+            </Form>
+        </Modal>
+    );
+};
+
+// 账户详情模态窗组件
+const AccountModal = ({ visible, onCancel, userInfo }) => {
+    return (
+        <Modal
+            title="账户详情"
+            open={visible}
+            onCancel={onCancel}
+            footer={[
+                <Button key="close" onClick={onCancel}>
+                    关闭
+                </Button>
+            ]}
+            width={400}
+        >
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                <Avatar size={64} icon={<UserOutlined />} style={{ marginBottom: 16 }} />
+                <div>
+                    <Text strong>用户名: </Text>
+                    <Text>{userInfo?.username || '未命名用户'}</Text>
+                </div>
+                <div style={{ marginTop: 8 }}>
+                    <Text type="secondary">这是您的账户信息页面</Text>
+                </div>
+            </div>
+        </Modal>
+    );
+};
 
 interface Star {
     x: number;
@@ -38,13 +134,17 @@ const Home = () => {
     const animationFrameRef = useRef<number>(0);
     const lastShootingStarTimeRef = useRef<number>(0);
 
-
     const [showEarth, setShowEarth] = useState(false);
     const [earthPosition, setEarthPosition] = useState({ x: 0, y: 0 });
     const [earthScale, setEarthScale] = useState(0.001);
     const [earthLoaded, setEarthLoaded] = useState(false);
     const [titleVisible, setTitleVisible] = useState(true);
     const isAnimatingRef = useRef(false);
+
+    // 添加状态管理
+    const { isLoggedIn, userInfo, login, logout } = useAuth();
+    const [loginModalVisible, setLoginModalVisible] = useState(false);
+    const [accountModalVisible, setAccountModalVisible] = useState(false);
 
     const hexToRgb = (hex: string): string => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -352,13 +452,50 @@ const Home = () => {
         }
     }, [earthLoaded]);
 
-    // 修改：添加返回首页的回调
     const handleBackToHome = () => {
         setShowEarth(false);
         setTitleVisible(true);
         setEarthLoaded(false);
         setEarthScale(0.001);
     };
+
+    // 处理退出登录
+    const handleLogout = () => {
+        Modal.confirm({
+            title: '确认退出',
+            content: '您确定要退出登录吗？',
+            okText: '确定',
+            cancelText: '取消',
+            onOk: () => {
+                logout();
+            }
+        });
+    };
+
+    // 用户下拉菜单项
+    const userMenuItems = isLoggedIn
+        ? [
+            {
+                key: 'account',
+                icon: <UserSwitchOutlined />,
+                label: '账户详情',
+                onClick: () => setAccountModalVisible(true)
+            },
+            {
+                key: 'logout',
+                icon: <LogoutOutlined />,
+                label: '退出登录',
+                onClick: handleLogout
+            }
+        ]
+        : [
+            {
+                key: 'login',
+                icon: <LoginOutlined />,
+                label: '登录',
+                onClick: () => setLoginModalVisible(true)
+            }
+        ];
 
     return (
         <Layout style={{ minHeight: '100vh', background: 'transparent' }}>
@@ -378,7 +515,7 @@ const Home = () => {
                 <Earth
                     initialScale={earthScale}
                     onLoaded={() => setEarthLoaded(true)}
-                    onBackToHome={handleBackToHome} // 新增：传递回调
+                    onBackToHome={handleBackToHome}
                     style={{
                         transform: `translate(${earthPosition.x}px, ${earthPosition.y}px)`,
                         transformOrigin: 'center',
@@ -406,7 +543,6 @@ const Home = () => {
                     alignItems: 'center',
                     height: '100%'
                 }}>
-                    {/* 修改：添加点击事件返回首页 */}
                     <Text
                         onClick={showEarth ? handleBackToHome : undefined}
                         style={{
@@ -416,17 +552,34 @@ const Home = () => {
                             background: 'linear-gradient(45deg, #4facfe, #00f2fe)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
-                            cursor: showEarth ? 'pointer' : 'default' // 仅在显示地球时可点击
+                            cursor: showEarth ? 'pointer' : 'default'
                         }}
                     >
                         DISCOVERY
                     </Text>
                     <div style={{ flex: 1 }} />
+
+                    {/* 添加用户头像下拉菜单 */}
+                    <Dropdown
+                        menu={{ items: userMenuItems }}
+                        placement="bottomRight"
+                        trigger={['hover']}
+                    >
+                        <div style={{
+                            cursor: 'pointer',
+                            padding: '8px',
+                            borderRadius: '50%',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <UserOutlined style={{ color: '#fff', fontSize: '18px' }} />
+                        </div>
+                    </Dropdown>
                 </div>
             </Header>
 
-
-            {/* 使用 Content 组件 */}
             <Content style={{ padding: '0 50px', marginTop: 64 }}>
                 <div style={{
                     maxWidth: 1200,
@@ -472,8 +625,22 @@ const Home = () => {
                 color: 'rgba(255, 255, 255, 0.6)',
                 zIndex: 20
             }}>
-                © {new Date().getFullYear()} 去探索 — 去发现
+                © {new Date().getFullYear()} 让思想的脚印延伸向视距外
             </Footer>
+
+            {/* 登录模态窗 */}
+            <LoginModal
+                visible={loginModalVisible}
+                onCancel={() => setLoginModalVisible(false)}
+                onLogin={login}
+            />
+
+            {/* 账户详情模态窗 */}
+            <AccountModal
+                visible={accountModalVisible}
+                onCancel={() => setAccountModalVisible(false)}
+                userInfo={userInfo}
+            />
         </Layout>
     );
 };
