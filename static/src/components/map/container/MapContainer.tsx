@@ -1,11 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Radio, Card } from 'antd';
-import { RadioChangeEvent } from 'antd/es/radio';
 import ThreeJSMap from '../three/ThreeJSMap';
-import { RegionType, UserLocation } from '../types';
+import { RegionType, UserLocation } from '../../../types/types';
 import './MapContainer.css';
 
 const { Group: RadioGroup } = Radio;
+type RadioGroupType = typeof Radio.Group;
+// 获取 Radio.Group 的 props 类型
+type RadioGroupProps = React.ComponentProps<RadioGroupType>;
+// 提取 onChange 属性的类型
+type OnChangeType = RadioGroupProps['onChange'];
+// 提取 onChange 函数的第一个参数的类型
+type DerivedRadioChangeEvent = Parameters<NonNullable<OnChangeType>>[0];
 
 interface MapContainerProps {
     selectedRegion: string;
@@ -21,7 +27,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
     const [regionType, setRegionType] = useState<RegionType>('city');
     const mapRef = useRef<any>(null);
 
-    const handleRegionTypeChange = (e: RadioChangeEvent) => {
+    const handleRegionTypeChange = (e: DerivedRadioChangeEvent) => {
         setRegionType(e.target.value);
     };
 
