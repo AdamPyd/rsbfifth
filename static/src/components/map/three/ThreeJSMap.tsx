@@ -149,40 +149,54 @@ const ThreeJSMap = forwardRef<ThreeJSMapHandle, ThreeJSMapProps>(
                     return;
                 }
 
-                if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
-                    try {
-                        const shape = createShapeFromCoordinates(geometry.coordinates);
-                        const extrudeSettings = {
-                            depth: properties.elevation || 2,
-                            bevelEnabled: false
-                        };
-
-                        const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-                        const material = new THREE.MeshPhongMaterial({
-                            color: 0x87e8de,
-                            side: THREE.DoubleSide,
-                            shininess: 70,
-                            emissive: 0x000000
+                try {
+                    if (geometry.type === 'Polygon') {
+                        createPolygonMesh(geometry.coordinates, properties);
+                    } else if (geometry.type === 'MultiPolygon') {
+                        // 处理MultiPolygon - 为每个多边形创建单独的网格
+                        geometry.coordinates.forEach((polygonCoords: number[][][]) => {
+                            createPolygonMesh(polygonCoords, properties);
                         });
-
-                        const mesh = new THREE.Mesh(geometry, material);
-                        mesh.rotation.x = -Math.PI / 2;
-                        mesh.userData = { regionCode: properties.code };
-                        mesh.castShadow = true;
-                        mesh.receiveShadow = true;
-
-                        mesh.userData.originalColor = material.color.clone();
-                        mesh.addEventListener('click', () => {
-                            onRegionSelect(properties.code);
-                        });
-
-                        sceneRef.current.add(mesh);
-                        regionsRef.current.push(mesh);
-                    } catch (error) {
-                        console.error('Error creating shape from coordinates:', error, properties);
                     }
+                } catch (error) {
+                    console.error('Error creating shape from coordinates:', error, properties);
                 }
             });
+        };
+
+        const createPolygonMesh = (coordinates: number[][][], properties: any) => {
+            if (!coordinates || coordinates.length === 0) {
+                console.warn('No coordinates data for:', properties);
+                return;
+            }
+
+            const shape = createShapeFromCoordinates(coordinates);
+            const extrudeSettings = {
+                depth: properties.elevation || 2,
+                bevelEnabled: false
+            };
+
+            const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x87e8de,
+                side: THREE.DoubleSide,
+                shininess: 70,
+                emissive: 0x000000
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.rotation.x = -Math.PI / 2;
+            mesh.userData = { regionCode: properties.code };
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+
+            mesh.userData.originalColor = material.color.clone();
+            mesh.addEventListener('click', () => {
+                onRegionSelect(properties.code);
+            });
+
+            sceneRef.current?.add(mesh);
+            regionsRef.current.push(mesh);
         };
 
         const createShapeFromCoordinates = (coordinates: number[][][]) => {
@@ -194,18 +208,32 @@ const ThreeJSMap = forwardRef<ThreeJSMapHandle, ThreeJSMapProps>(
                 return shape;
             }
 
-            // 处理MultiPolygon情况
-            if (Array.isArray(coordinates[0][0]) && Array.isArray(coordinates[0][0][0])) {
-                // 这是MultiPolygon，取第一个多边形
-                coordinates = coordinates[0];
-            }
+            // 处理外环（第一个数组）和内环（后续数组）
+            coordinates.forEach((ring, ringIndex) => {
+                if (!ring || ring.length === 0) return;
 
-            coordinates[0].forEach((coord, index) => {
-                const [x, y] = coord;
-                if (index === 0) {
-                    shape.moveTo(x, y);
+                if (ringIndex === 0) {
+                    // 外环
+                    ring.forEach((coord, index) => {
+                        const [x, y] = coord;
+                        if (index === 0) {
+                            shape.moveTo(x, y);
+                        } else {
+                            shape.lineTo(x, y);
+                        }
+                    });
                 } else {
-                    shape.lineTo(x, y);
+                    // 内环（孔洞）
+                    const hole = new THREE.Path();
+                    ring.forEach((coord, index) => {
+                        const [x, y] = coord;
+                        if (index === 0) {
+                            hole.moveTo(x, y);
+                        } else {
+                            hole.lineTo(x, y);
+                        }
+                    });
+                    shape.holes.push(hole);
                 }
             });
 
