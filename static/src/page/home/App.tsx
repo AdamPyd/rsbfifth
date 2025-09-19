@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import TestHome from '../test/TestHome';
 import TestPage from '../test/TestPage';
+import MainPage from '../map/MainPage';
 import Home from '../Home';
 
 const App: React.FC = () => {
@@ -11,6 +12,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/testPage" element={<TestPage />} />
             <Route path="/home" element={<TestHome />} />
+            <Route path="/map" element={<MainPage />} />
         </Routes>
       </div>
   );

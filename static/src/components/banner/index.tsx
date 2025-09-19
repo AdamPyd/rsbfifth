@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from 'antd';
-import './Banner.css';
+import './index.css';
 
 const { Title } = Typography;
 

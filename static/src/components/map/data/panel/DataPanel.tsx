@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Tabs, Card } from 'antd';
-import type { TabsProps } from 'antd';
-import { RegionData } from '../types';
-import DataCalendar from './DataCalendar';
-import DataDisplay from './DataDisplay';
+import { RegionData } from '../../../../types/types';
+import DataCalendar from '../../calendar/DataCalendar';
+import DataDisplay from '../display/DataDisplay';
 import './DataPanel.css';
 
 const { TabPane } = Tabs;
+// 使用 React.ComponentProps (需要 @types/react)
+type TabsProps = React.ComponentProps<typeof Tabs>;
 
 interface DataPanelProps {
     regionData: RegionData | null;

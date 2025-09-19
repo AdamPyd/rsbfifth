@@ -1,8 +1,8 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { RegionType, UserLocation } from '../types';
-import { loadMapData, loadRegionGeoJson } from '../services/mapData';
+import { RegionType, UserLocation } from '../../../types/types';
+import { loadMapData, loadRegionGeoJson } from '../../../services/mapData';
 import './ThreeJSMap.css';
 
 interface ThreeJSMapProps {

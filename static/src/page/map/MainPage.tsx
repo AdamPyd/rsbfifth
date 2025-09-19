@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Row, Col } from 'antd';
-import Banner from '../../components/Banner';
+import Banner from '../../components/banner';
 import MapContainer from '../../components/map/container/MapContainer';
-import DataPanel from '../../components/map/data/DataPanel';
-import { fetchUserLocation, fetchRegionData } from './services/api';
-import { RegionData, RegionType, UserLocation } from './types';
+import DataPanel from '../../components/map/data/panel/DataPanel';
+import { fetchUserLocation, fetchRegionData } from '../../services/api';
+import { RegionData, RegionType, UserLocation } from '../../types/types';
 import './MainPage.css';
 
 const { Content } = Layout;
