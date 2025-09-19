@@ -138,46 +138,67 @@ const ThreeJSMap = forwardRef<ThreeJSMapHandle, ThreeJSMapProps>(
         }, [regionType]);
 
         const createMapFromGeoJson = (geoJson: any) => {
-            if (!sceneRef.current) return;
+            if (!sceneRef.current || !geoJson || !geoJson.features) return;
 
             geoJson.features.forEach((feature: any) => {
                 const { properties, geometry } = feature;
 
+                // 添加检查确保geometry存在且有coordinates
+                if (!geometry || !geometry.coordinates) {
+                    console.warn('Invalid geometry data in feature:', properties);
+                    return;
+                }
+
                 if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
-                    const shape = createShapeFromCoordinates(geometry.coordinates);
-                    const extrudeSettings = {
-                        depth: properties.elevation || 2,
-                        bevelEnabled: false
-                    };
+                    try {
+                        const shape = createShapeFromCoordinates(geometry.coordinates);
+                        const extrudeSettings = {
+                            depth: properties.elevation || 2,
+                            bevelEnabled: false
+                        };
 
-                    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-                    const material = new THREE.MeshPhongMaterial({
-                        color: 0x87e8de,
-                        side: THREE.DoubleSide,
-                        shininess: 70,
-                        emissive: 0x000000
-                    });
+                        const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                        const material = new THREE.MeshPhongMaterial({
+                            color: 0x87e8de,
+                            side: THREE.DoubleSide,
+                            shininess: 70,
+                            emissive: 0x000000
+                        });
 
-                    const mesh = new THREE.Mesh(geometry, material);
-                    mesh.rotation.x = -Math.PI / 2; // 旋转以使地图平放
-                    mesh.userData = { regionCode: properties.code };
-                    mesh.castShadow = true;
-                    mesh.receiveShadow = true;
+                        const mesh = new THREE.Mesh(geometry, material);
+                        mesh.rotation.x = -Math.PI / 2;
+                        mesh.userData = { regionCode: properties.code };
+                        mesh.castShadow = true;
+                        mesh.receiveShadow = true;
 
-                    // 添加交互事件
-                    mesh.userData.originalColor = material.color.clone();
-                    mesh.addEventListener('click', () => {
-                        onRegionSelect(properties.code);
-                    });
+                        mesh.userData.originalColor = material.color.clone();
+                        mesh.addEventListener('click', () => {
+                            onRegionSelect(properties.code);
+                        });
 
-                    sceneRef.current?.add(mesh);
-                    regionsRef.current.push(mesh);
+                        sceneRef.current.add(mesh);
+                        regionsRef.current.push(mesh);
+                    } catch (error) {
+                        console.error('Error creating shape from coordinates:', error, properties);
+                    }
                 }
             });
         };
 
         const createShapeFromCoordinates = (coordinates: number[][][]) => {
             const shape = new THREE.Shape();
+
+            // 确保coordinates存在且有数据
+            if (!coordinates || coordinates.length === 0) {
+                console.warn('No coordinates data');
+                return shape;
+            }
+
+            // 处理MultiPolygon情况
+            if (Array.isArray(coordinates[0][0]) && Array.isArray(coordinates[0][0][0])) {
+                // 这是MultiPolygon，取第一个多边形
+                coordinates = coordinates[0];
+            }
 
             coordinates[0].forEach((coord, index) => {
                 const [x, y] = coord;
