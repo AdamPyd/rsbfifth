@@ -87,10 +87,8 @@ const ThreeJSMap = forwardRef<ThreeJSMapHandle, ThreeJSMapProps>(
 
             mountRef.current.appendChild(renderer.domElement);
 
-            // 加载地图数据
-            loadMapData(regionType).then(geoJson => {
-                createMapFromGeoJson(geoJson);
-            });
+            // 加载模拟地图数据
+            createMockMap();
 
             const animate = () => {
                 requestAnimationFrame(animate);
@@ -121,124 +119,145 @@ const ThreeJSMap = forwardRef<ThreeJSMapHandle, ThreeJSMapProps>(
             };
         }, []);
 
-        useEffect(() => {
-            // 区域类型变化时重新加载地图
-            if (sceneRef.current) {
-                // 清除现有区域
-                regionsRef.current.forEach(mesh => {
-                    sceneRef.current?.remove(mesh);
-                });
-                regionsRef.current = [];
+        // 创建模拟地图数据
+        const createMockMap = () => {
+            if (!sceneRef.current) return;
 
-                // 加载新数据
-                loadMapData(regionType).then(geoJson => {
-                    createMapFromGeoJson(geoJson);
+            // 清除现有区域
+            regionsRef.current.forEach(mesh => {
+                sceneRef.current?.remove(mesh);
+            });
+            regionsRef.current = [];
+
+            // 创建模拟的浙江省地图区域
+            const regions = [
+                {
+                    code: '330100',
+                    name: '杭州市',
+                    position: { x: 0, y: 0 },
+                    size: { width: 20, height: 15 },
+                    elevation: 3
+                },
+                {
+                    code: '330200',
+                    name: '宁波市',
+                    position: { x: 25, y: 5 },
+                    size: { width: 18, height: 12 },
+                    elevation: 2.5
+                },
+                {
+                    code: '330300',
+                    name: '温州市',
+                    position: { x: 15, y: 20 },
+                    size: { width: 16, height: 14 },
+                    elevation: 2
+                },
+                {
+                    code: '330400',
+                    name: '嘉兴市',
+                    position: { x: 10, y: -15 },
+                    size: { width: 12, height: 10 },
+                    elevation: 1.5
+                },
+                {
+                    code: '330500',
+                    name: '湖州市',
+                    position: { x: -5, y: -10 },
+                    size: { width: 14, height: 11 },
+                    elevation: 2
+                }
+            ];
+
+            regions.forEach(region => {
+                const shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                shape.lineTo(region.size.width, 0);
+                shape.lineTo(region.size.width, region.size.height);
+                shape.lineTo(0, region.size.height);
+                shape.lineTo(0, 0);
+
+                const extrudeSettings = {
+                    depth: region.elevation,
+                    bevelEnabled: false
+                };
+
+                const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                const material = new THREE.MeshPhongMaterial({
+                    color: selectedRegion === region.code ? 0x1890ff : 0x87e8de,
+                    side: THREE.DoubleSide,
+                    shininess: 70,
+                    emissive: selectedRegion === region.code ? 0x052a56 : 0x000000
                 });
+
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.rotation.x = -Math.PI / 2;
+                mesh.position.set(region.position.x, region.position.y, 0);
+                mesh.userData = { regionCode: region.code };
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+
+                // 添加交互事件
+                mesh.userData.originalColor = material.color.clone();
+
+                // 添加点击事件监听器
+                const handleClick = () => {
+                    onRegionSelect(region.code);
+                };
+
+                // 添加事件监听器
+                mesh.addEventListener('click', handleClick);
+                mesh.userData.handleClick = handleClick;
+
+                sceneRef.current?.add(mesh);
+                regionsRef.current.push(mesh);
+
+                // 添加区域名称文本
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                if (context) {
+                    canvas.width = 256;
+                    canvas.height = 64;
+                    context.fillStyle = selectedRegion === region.code ? '#ffffff' : '#262626';
+                    context.font = '24px Arial';
+                    context.textAlign = 'center';
+                    context.fillText(region.name, 128, 32);
+
+                    const texture = new THREE.CanvasTexture(canvas);
+                    const textMaterial = new THREE.SpriteMaterial({ map: texture });
+                    const textSprite = new THREE.Sprite(textMaterial);
+                    textSprite.position.set(
+                        region.position.x + region.size.width / 2,
+                        region.position.y + region.size.height / 2,
+                        region.elevation + 1
+                    );
+                    textSprite.scale.set(10, 2.5, 1);
+                    sceneRef.current.add(textSprite);
+                }
+            });
+        };
+
+        useEffect(() => {
+            // 当选中区域变化时更新地图高亮
+            if (sceneRef.current) {
+                regionsRef.current.forEach(mesh => {
+                    const code = mesh.userData.regionCode;
+                    if (code === selectedRegion) {
+                        (mesh.material as THREE.MeshPhongMaterial).color.set(0x1890ff);
+                        (mesh.material as THREE.MeshPhongMaterial).emissive.set(0x052a56);
+                    } else {
+                        (mesh.material as THREE.MeshPhongMaterial).color.set(0x87e8de);
+                        (mesh.material as THREE.MeshPhongMaterial).emissive.set(0x000000);
+                    }
+                });
+            }
+        }, [selectedRegion]);
+
+        useEffect(() => {
+            // 区域类型变化时重新创建地图
+            if (sceneRef.current) {
+                createMockMap();
             }
         }, [regionType]);
-
-        const createMapFromGeoJson = (geoJson: any) => {
-            if (!sceneRef.current || !geoJson || !geoJson.features) return;
-
-            geoJson.features.forEach((feature: any) => {
-                const { properties, geometry } = feature;
-
-                // 添加检查确保geometry存在且有coordinates
-                if (!geometry || !geometry.coordinates) {
-                    console.warn('Invalid geometry data in feature:', properties);
-                    return;
-                }
-
-                try {
-                    if (geometry.type === 'Polygon') {
-                        createPolygonMesh(geometry.coordinates, properties);
-                    } else if (geometry.type === 'MultiPolygon') {
-                        // 处理MultiPolygon - 为每个多边形创建单独的网格
-                        geometry.coordinates.forEach((polygonCoords: number[][][]) => {
-                            createPolygonMesh(polygonCoords, properties);
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error creating shape from coordinates:', error, properties);
-                }
-            });
-        };
-
-        const createPolygonMesh = (coordinates: number[][][], properties: any) => {
-            if (!coordinates || coordinates.length === 0) {
-                console.warn('No coordinates data for:', properties);
-                return;
-            }
-
-            const shape = createShapeFromCoordinates(coordinates);
-            const extrudeSettings = {
-                depth: properties.elevation || 2,
-                bevelEnabled: false
-            };
-
-            const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x87e8de,
-                side: THREE.DoubleSide,
-                shininess: 70,
-                emissive: 0x000000
-            });
-
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.rotation.x = -Math.PI / 2;
-            mesh.userData = { regionCode: properties.code };
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-
-            mesh.userData.originalColor = material.color.clone();
-            mesh.addEventListener('click', () => {
-                onRegionSelect(properties.code);
-            });
-
-            sceneRef.current?.add(mesh);
-            regionsRef.current.push(mesh);
-        };
-
-        const createShapeFromCoordinates = (coordinates: number[][][]) => {
-            const shape = new THREE.Shape();
-
-            // 确保coordinates存在且有数据
-            if (!coordinates || coordinates.length === 0) {
-                console.warn('No coordinates data');
-                return shape;
-            }
-
-            // 处理外环（第一个数组）和内环（后续数组）
-            coordinates.forEach((ring, ringIndex) => {
-                if (!ring || ring.length === 0) return;
-
-                if (ringIndex === 0) {
-                    // 外环
-                    ring.forEach((coord, index) => {
-                        const [x, y] = coord;
-                        if (index === 0) {
-                            shape.moveTo(x, y);
-                        } else {
-                            shape.lineTo(x, y);
-                        }
-                    });
-                } else {
-                    // 内环（孔洞）
-                    const hole = new THREE.Path();
-                    ring.forEach((coord, index) => {
-                        const [x, y] = coord;
-                        if (index === 0) {
-                            hole.moveTo(x, y);
-                        } else {
-                            hole.lineTo(x, y);
-                        }
-                    });
-                    shape.holes.push(hole);
-                }
-            });
-
-            return shape;
-        };
 
         return <div ref={mountRef} className="threejs-map" />;
     }

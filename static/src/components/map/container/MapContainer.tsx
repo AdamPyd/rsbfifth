@@ -16,20 +16,25 @@ type DerivedRadioChangeEvent = Parameters<NonNullable<OnChangeType>>[0];
 interface MapContainerProps {
     selectedRegion: string;
     onRegionSelect: (regionCode: string) => void;
-    userLocation: UserLocation | null;
 }
 
 const MapContainer: React.FC<MapContainerProps> = ({
                                                        selectedRegion,
                                                        onRegionSelect,
-                                                       userLocation
                                                    }) => {
     const [regionType, setRegionType] = useState<RegionType>('city');
     const mapRef = useRef<any>(null);
 
-    const handleRegionTypeChange = (e: DerivedRadioChangeEvent) => {
+    const handleRegionTypeChange = (e: RadioChangeEvent) => {
         setRegionType(e.target.value);
     };
+
+    useEffect(() => {
+        // 当选中区域变化时，高亮显示该区域
+        if (mapRef.current) {
+            mapRef.current.highlightRegion(selectedRegion);
+        }
+    }, [selectedRegion]);
 
     return (
         <Card
@@ -38,7 +43,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
             extra={
                 <div className="map-controls">
                     <span>视图级别：</span>
-                    <RadioGroup
+                    <Radio.Group
                         value={regionType}
                         onChange={handleRegionTypeChange}
                         optionType="button"
@@ -48,7 +53,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
                         <Radio value="province">省</Radio>
                         <Radio value="city">地级市</Radio>
                         <Radio value="county">县/县级市</Radio>
-                    </RadioGroup>
+                    </Radio.Group>
                 </div>
             }
         >
@@ -58,7 +63,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
                     regionType={regionType}
                     selectedRegion={selectedRegion}
                     onRegionSelect={onRegionSelect}
-                    userLocation={userLocation}
+                    userLocation={null}
                 />
             </div>
         </Card>

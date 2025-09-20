@@ -2,7 +2,6 @@
 
 // 模拟地图数据加载
 export const loadMapData = async (regionType: string): Promise<any> => {
-    // 实际项目中这里应该加载真实的GeoJSON数据
     return new Promise((resolve) => {
         setTimeout(() => {
             // 返回模拟的GeoJSON数据
@@ -50,6 +49,29 @@ export const loadMapData = async (regionType: string): Promise<any> => {
                                         [122.0, 30.0],
                                         [121.0, 30.0],
                                         [121.0, 29.5]
+                                    ]
+                                ]
+                            ]
+                        }
+                    },
+                    {
+                        type: 'Feature',
+                        properties: {
+                            name: '温州市',
+                            code: '330300',
+                            center: [120.69939, 27.99492],
+                            elevation: 1.8
+                        },
+                        geometry: {
+                            type: 'MultiPolygon',
+                            coordinates: [
+                                [
+                                    [
+                                        [120.0, 27.5],
+                                        [121.0, 27.5],
+                                        [121.0, 28.5],
+                                        [120.0, 28.5],
+                                        [120.0, 27.5]
                                     ]
                                 ]
                             ]
