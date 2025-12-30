@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Button } from 'antd';
+import { Button, Row, Col, Progress } from 'antd';
 import './CustomConfig.css';
 
 interface ConfigProps {
@@ -36,7 +36,7 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig, isCollapsed, o
         setShowDeletedPicker(false);
     };
 
-    if (isCollapsed) {
+    if (!isCollapsed) {
         return (
             <div className="section-collapsed" onClick={onToggle}>
                 自定义配置
@@ -52,7 +52,7 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig, isCollapsed, o
             </div>
             <div className="config-row">
                 <label>
-                    <div className="color-preview" style={{ backgroundColor: config.addedColor }} onClick={() => setShowAddedPicker(!showAddedPicker)} >
+                    <div className="color-preview" style={{ backgroundColor: config.addedColor, color: getContrastColor(config.addedColor) }} onClick={() => setShowAddedPicker(!showAddedPicker)} >
                         新增部分的颜色
                     </div>
                     {showAddedPicker && (
@@ -66,7 +66,7 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig, isCollapsed, o
                     )}
                 </label>
                 <label>
-                    <div className="color-preview" style={{ backgroundColor: config.deletedColor }} onClick={() => setShowDeletedPicker(!showDeletedPicker)} >
+                    <div className="color-preview" style={{ backgroundColor: config.deletedColor, color: getContrastColor(config.deletedColor) }} onClick={() => setShowDeletedPicker(!showDeletedPicker)} >
                         删除部分的颜色
                     </div>
                     {showDeletedPicker && (
@@ -79,19 +79,30 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig, isCollapsed, o
                         />
                     )}
                 </label>
-                <label>
-                    差异离散度：{config.discreteness}
-                    <input
-                        type="range"
-                        min="1"
-                        max="10"
-                        value={config.discreteness}
-                        onChange={handleDiscretenessChange}
-                    />
-                </label>
+                <Row>
+                    <Col>差异离散度：</Col>
+                    <Col>
+                        <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            value={config.discreteness}
+                            onChange={handleDiscretenessChange}
+                        />
+                    </Col>
+                    <Col>{config.discreteness}</Col>
+                </Row>
             </div>
         </div>
     );
+};
+
+const getContrastColor = (hex: string) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return yiq >= 128 ? '#000' : '#fff';
 };
 
 export default CustomConfig;

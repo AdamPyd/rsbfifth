@@ -35,7 +35,10 @@ const DiffResult: React.FC<DiffResultProps> = ({ config, textData, isCollapsed, 
                 <Button onClick={onToggle} color="primary" variant="text">收起</Button>
             </div>
             <div className="tabs">
-                <Radio.Group value={activeTab} onChange={(e) => setActiveTab(e.target.value)}>
+                <Radio.Group
+                    value={activeTab}
+                    onChange={(e) => setActiveTab(e.target.value)}
+                >
                     <Radio.Button value="split">左右模式</Radio.Button>
                     <Radio.Button value="active">融合模式</Radio.Button>
                 </Radio.Group>
