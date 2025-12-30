@@ -1,0 +1,70 @@
+
+.diff-result {
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.tabs button {
+    padding: 6px 12px;
+    border: 1px solid #d9d9d9;
+    background: #ffffff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tabs button.active {
+    background: #1890ff;
+    color: #ffffff;
+    border-color: #1890ff;
+}
+
+.result-content {
+    min-height: 200px;
+}
+
+.split-view {
+    display: flex;
+    gap: 20px;
+}
+
+.diff-box {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #d9d9d9;
+    border-left-width: 4px;
+    border-radius: 4px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    overflow: auto;
+    min-height: 200px;
+}
+
+.unified-view {
+    padding: 12px;
+    border: 1px solid #d9d9d9;
+    border-left-width: 4px;
+    border-radius: 4px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    overflow: auto;
+    min-height: 200px;
+}

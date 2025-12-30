@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import TestHome from '../test/TestHome';
 import TestPage from '../test/TestPage';
 import MainPage from '../map/MainPage';
+import DiffComparator from '../comparator';
 import Home from '../Home';
 
 const App: React.FC = () => {
@@ -13,6 +14,7 @@ const App: React.FC = () => {
             <Route path="/testPage" element={<TestPage />} />
             <Route path="/home" element={<TestHome />} />
             <Route path="/map" element={<MainPage />} />
+            <Route path="/diff" element={<DiffComparator />} />
         </Routes>
       </div>
   );
