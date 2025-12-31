@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import CustomConfig from './config/CustomConfig';
 import TextComparison from './comparision/TextComparison';
 import DiffResult from './result/DiffResult';
 import './index.css';
@@ -18,12 +17,18 @@ const DiffComparator: React.FC = () => {
     });
 
     const [collapsedSections, setCollapsedSections] = useState({
-        config: false,
         text: false,
         result: false,
     });
 
-    const toggleSection = (section: 'config' | 'text' | 'result') => {
+    // 差异效果的三个值
+    const [diffResults, setDiffResults] = useState({
+        originResult: '',
+        newResult: '',
+        mixResult: ''
+    });
+
+    const toggleSection = (section: 'text' | 'result') => {
         setCollapsedSections(prev => ({
             ...prev,
             [section]: !prev[section],
@@ -32,20 +37,17 @@ const DiffComparator: React.FC = () => {
 
     return (
         <div className="app">
-            <CustomConfig
-                config={config}
-                setConfig={setConfig}
-                isCollapsed={collapsedSections.config}
-                onToggle={() => toggleSection('config')}
-            />
             <TextComparison
                 textData={textData}
                 setTextData={setTextData}
+                config={config}
                 isCollapsed={collapsedSections.text}
                 onToggle={() => toggleSection('text')}
             />
             <DiffResult
                 config={config}
+                setConfig={setConfig}
+                diffResults={diffResults}
                 textData={textData}
                 isCollapsed={collapsedSections.result}
                 onToggle={() => toggleSection('result')}

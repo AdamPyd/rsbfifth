@@ -1,26 +1,12 @@
 
-.custom-config {
-    background: #ffffff;
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    font-size: 16px;
-    font-weight: 500;
+.custom-config-popup {
+    padding: 10px 0;
 }
 
 .config-row {
     display: flex;
-    gap: 30px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .config-row label {
@@ -33,7 +19,7 @@
 .color-preview {
     width: 100px;
     height: 20px;
-    border: 0px solid #ccc;
+    border: 1px solid #ccc;
     border-radius: 4px;
     margin-top: 0px;
     cursor: pointer;
@@ -46,4 +32,9 @@ input[type="color"] {
     background: none;
     cursor: pointer;
     margin-top: 4px;
+}
+
+input[type="range"] {
+    width: 100%;
+    margin-top: 8px;
 }

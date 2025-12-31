@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Button, Row, Col, Progress } from 'antd';
+import { Row, Col } from 'antd';
 import './CustomConfig.css';
 
 interface ConfigProps {
@@ -14,11 +14,9 @@ interface ConfigProps {
         deletedColor: string;
         discreteness: number;
     }>>;
-    isCollapsed: boolean;
-    onToggle: () => void;
 }
 
-const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig, isCollapsed, onToggle }) => {
+const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig }) => {
     const [showAddedPicker, setShowAddedPicker] = useState(false);
     const [showDeletedPicker, setShowDeletedPicker] = useState(false);
 
@@ -36,20 +34,8 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig, isCollapsed, o
         setShowDeletedPicker(false);
     };
 
-    if (!isCollapsed) {
-        return (
-            <div className="section-collapsed" onClick={onToggle}>
-                自定义配置
-            </div>
-        );
-    }
-
     return (
-        <div className="custom-config">
-            <div className="section-header">
-                <span>自定义配置</span>
-                <Button onClick={onToggle} color="primary" variant="text">收起</Button>
-            </div>
+        <div className="custom-config-popup">
             <div className="config-row">
                 <label>
                     <div className="color-preview" style={{ backgroundColor: config.addedColor, color: getContrastColor(config.addedColor) }} onClick={() => setShowAddedPicker(!showAddedPicker)} >
@@ -80,7 +66,7 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig, isCollapsed, o
                     )}
                 </label>
                 <Row>
-                    <Col>差异离散度：</Col>
+                    <Col style={{ marginTop : '5px'}}>差异离散度：</Col>
                     <Col>
                         <input
                             type="range"
@@ -90,7 +76,7 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig, isCollapsed, o
                             onChange={handleDiscretenessChange}
                         />
                     </Col>
-                    <Col>{config.discreteness}</Col>
+                    <Col style={{ marginLeft : '10px', marginTop : '5px'}}>{config.discreteness}</Col>
                 </Row>
             </div>
         </div>

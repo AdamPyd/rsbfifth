@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { Button, Radio } from 'antd';
+import { Row, Col } from 'antd';
+import CustomConfig from '../config/CustomConfig';
 import './DiffResult.css';
 
 interface DiffResultProps {
@@ -13,11 +15,29 @@ interface DiffResultProps {
         leftText: string;
         rightText: string;
     };
+    diffResults: {
+        originResult: string;
+        newResult: string;
+        mixResult: string;
+    };
     isCollapsed: boolean;
     onToggle: () => void;
+    setConfig: React.Dispatch<React.SetStateAction<{
+        addedColor: string;
+        deletedColor: string;
+        discreteness: number;
+    }>>;
 }
 
-const DiffResult: React.FC<DiffResultProps> = ({ config, textData, isCollapsed, onToggle }) => {
+const DiffResult: React.FC<DiffResultProps> = ({
+                                                   config,
+                                                   textData,
+                                                   diffResults,
+                                                   isCollapsed,
+                                                   onToggle,
+                                                   setConfig,
+                                               }) => {
+    const [showConfig, setShowConfig] = useState(false);
     const [activeTab, setActiveTab] = useState<'split' | 'unified'>('split');
 
     if (isCollapsed) {
@@ -31,7 +51,36 @@ const DiffResult: React.FC<DiffResultProps> = ({ config, textData, isCollapsed, 
     return (
         <div className="diff-result">
             <div className="section-header">
-                <span>对比结果</span>
+                <Row>
+                    <Col>
+                        <div className="section-header">
+                            <span>对比结果</span>
+                        </div>
+                    </Col>
+                    <Col>
+                        <span
+                            className="config-link"
+                            style={{ marginLeft:'5px' }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowConfig(!showConfig);
+                            }}
+                        >
+                          自定义配置
+                        </span>
+                    </Col>
+                </Row>
+                {showConfig && (
+                    <div className="config-overlay" onClick={() => setShowConfig(false)}>
+                        <div className="config-popup" onClick={(e) => e.stopPropagation()}>
+                            <div className="popup-header">
+                                <span>自定义配置</span>
+                                <button className="close-btn" onClick={() => setShowConfig(false)}>×</button>
+                            </div>
+                            <CustomConfig config={config} setConfig={setConfig} />
+                        </div>
+                    </div>
+                )}
                 <Button onClick={onToggle} color="primary" variant="text">收起</Button>
             </div>
             <div className="tabs">
@@ -50,15 +99,13 @@ const DiffResult: React.FC<DiffResultProps> = ({ config, textData, isCollapsed, 
                             className="diff-box"
                             // style={{ borderLeftColor: config.addedColor }}
                         >
-                            {/* 这里应实现左右差异高亮逻辑 */}
-                            {textData.leftText || ''}
+                            {diffResults.originResult}
                         </div>
                         <div
                             className="diff-box"
                             // style={{ borderLeftColor: config.deletedColor }}
                         >
-                            {/* 这里应实现右侧差异高亮逻辑 */}
-                            {textData.rightText || ''}
+                            {diffResults.newResult}
                         </div>
                     </div>
                 ) : (
@@ -66,7 +113,7 @@ const DiffResult: React.FC<DiffResultProps> = ({ config, textData, isCollapsed, 
                         className="unified-view"
                         // style={{ borderLeftColor: config.addedColor }}
                     >
-                        {/* 这里应实现融合差异展示逻辑 */}
+                        {diffResults.mixResult}
                     </div>
                 )}
             </div>

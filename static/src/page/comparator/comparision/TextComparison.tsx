@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'antd';
 import './TextComparison.css';
 
@@ -16,7 +16,14 @@ interface TextComparisonProps {
     onToggle: () => void;
 }
 
-const TextComparison: React.FC<TextComparisonProps> = ({ textData, setTextData, isCollapsed, onToggle }) => {
+const TextComparison: React.FC<TextComparisonProps> = ({
+                                                           textData,
+                                                           setTextData,
+                                                           config,
+                                                           isCollapsed,
+                                                           onToggle
+                                                       }) => {
+
     const handleLeftChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setTextData(prev => ({ ...prev, leftText: e.target.value }));
     };
@@ -37,7 +44,9 @@ const TextComparison: React.FC<TextComparisonProps> = ({ textData, setTextData, 
         <div className="text-comparison">
             <div className="section-header">
                 <span>要对比的数据</span>
-                <Button onClick={onToggle} color="primary" variant="text">收起</Button>
+                <div className="header-actions">
+                    <Button onClick={onToggle} color="primary" variant="text">收起</Button>
+                </div>
             </div>
             <div className="text-inputs">
         <textarea
