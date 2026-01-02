@@ -52,13 +52,13 @@ const TextComparison: React.FC<TextComparisonProps> = ({
         <textarea
             value={textData.leftText}
             onChange={handleLeftChange}
-            placeholder="原始文本"
+            placeholder="变更前"
             className="text-input"
         />
                 <textarea
                     value={textData.rightText}
                     onChange={handleRightChange}
-                    placeholder="变更后文本"
+                    placeholder="变更后"
                     className="text-input"
                 />
             </div>

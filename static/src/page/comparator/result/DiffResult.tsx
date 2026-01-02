@@ -98,23 +98,20 @@ const DiffResult: React.FC<DiffResultProps> = ({
                         <div
                             className="diff-box"
                             // style={{ borderLeftColor: config.addedColor }}
-                        >
-                            {diffResults.originResult}
-                        </div>
+                            dangerouslySetInnerHTML={{ __html: diffResults.originResult }}
+                        />
                         <div
                             className="diff-box"
                             // style={{ borderLeftColor: config.deletedColor }}
-                        >
-                            {diffResults.newResult}
-                        </div>
+                            dangerouslySetInnerHTML={{ __html: diffResults.newResult }}
+                        />
                     </div>
                 ) : (
                     <div
                         className="unified-view"
-                        // style={{ borderLeftColor: config.addedColor }}
-                    >
-                        {diffResults.mixResult}
-                    </div>
+                        style={{ borderLeftColor: config.addedColor }}
+                        dangerouslySetInnerHTML={{ __html: diffResults.mixResult }}
+                    />
                 )}
             </div>
         </div>
