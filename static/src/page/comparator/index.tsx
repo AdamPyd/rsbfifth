@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import TextComparison from './comparision/TextComparison';
 import DiffResult from './result/DiffResult';
 import './index.css';
+import { StringUtilsPy } from '../../types/comparator/stringUtilsPy';
 
 const DiffComparator: React.FC = () => {
     const [config, setConfig] = useState({
@@ -29,51 +30,52 @@ const DiffComparator: React.FC = () => {
     });
 
     // 比较函数
-    const compare = (str1: string, str2: string): Record<string, string> => {
-        // 简单的行对比实现
-        const lines1 = str1.split('\n');
-        const lines2 = str2.split('\n');
-        const maxLines = Math.max(lines1.length, lines2.length);
-
-        const originResult: string[] = [];
-        const newResult: string[] = [];
-        const mixResult: string[] = [];
-
-        for (let i = 0; i < maxLines; i++) {
-            const line1 = lines1[i] || '';
-            const line2 = lines2[i] || '';
-
-            if (line1 === line2) {
-                originResult.push(`<div>${line1}</div>`);
-                newResult.push(`<div>${line2}</div>`);
-                mixResult.push(`<div>${line1}</div>`);
-            } else {
-                if (line1) {
-                    originResult.push(`<div style="background-color: ${config.deletedColor}20;"><del>${line1}</del></div>`);
-                }
-                if (line2) {
-                    newResult.push(`<div style="background-color: ${config.addedColor}20;"><ins>${line2}</ins></div>`);
-                }
-                mixResult.push(
-                    `<div style="display: flex; gap: 10px;">` +
-                    `<div style="flex: 1; background-color: ${config.deletedColor}20;"><del>${line1 || ''}</del></div>` +
-                    `<div style="flex: 1; background-color: ${config.addedColor}20;"><ins>${line2 || ''}</ins></div>` +
-                    `</div>`
-                );
-            }
-        }
-
-        return {
-            originResult: originResult.join(''),
-            newResult: newResult.join(''),
-            mixResult: mixResult.join('')
-        };
-    };
+    // const compare = (str1: string, str2: string): Record<string, string> => {
+    //     // 简单的行对比实现
+    //     const lines1 = str1.split('\n');
+    //     const lines2 = str2.split('\n');
+    //     const maxLines = Math.max(lines1.length, lines2.length);
+    //
+    //     const originResult: string[] = [];
+    //     const newResult: string[] = [];
+    //     const mixResult: string[] = [];
+    //
+    //     for (let i = 0; i < maxLines; i++) {
+    //         const line1 = lines1[i] || '';
+    //         const line2 = lines2[i] || '';
+    //
+    //         if (line1 === line2) {
+    //             originResult.push(`<div>${line1}</div>`);
+    //             newResult.push(`<div>${line2}</div>`);
+    //             mixResult.push(`<div>${line1}</div>`);
+    //         } else {
+    //             if (line1) {
+    //                 originResult.push(`<div style="background-color: ${config.deletedColor}20;"><del>${line1}</del></div>`);
+    //             }
+    //             if (line2) {
+    //                 newResult.push(`<div style="background-color: ${config.addedColor}20;"><ins>${line2}</ins></div>`);
+    //             }
+    //             mixResult.push(
+    //                 `<div style="display: flex; gap: 10px;">` +
+    //                 `<div style="flex: 1; background-color: ${config.deletedColor}20;"><del>${line1 || ''}</del></div>` +
+    //                 `<div style="flex: 1; background-color: ${config.addedColor}20;"><ins>${line2 || ''}</ins></div>` +
+    //                 `</div>`
+    //             );
+    //         }
+    //     }
+    //
+    //     return {
+    //         originResult: originResult.join(''),
+    //         newResult: newResult.join(''),
+    //         mixResult: mixResult.join('')
+    //     };
+    // };
 
     // 文本变化时触发比较
     useEffect(() => {
-        if (textData.leftText || textData.rightText) {
-            const results = compare(textData.leftText, textData.rightText);
+        if (!!textData.leftText || !!textData.rightText) {
+            const results = StringUtilsPy.compare(textData.leftText
+                , textData.rightText);
             setDiffResults(results);
 
             // 展开结果区域

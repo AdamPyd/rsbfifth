@@ -109,7 +109,7 @@ const DiffResult: React.FC<DiffResultProps> = ({
                 ) : (
                     <div
                         className="unified-view"
-                        style={{ borderLeftColor: config.addedColor }}
+                        // style={{ borderLeftColor: config.addedColor }}
                         dangerouslySetInnerHTML={{ __html: diffResults.mixResult }}
                     />
                 )}

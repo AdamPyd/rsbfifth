@@ -19,15 +19,15 @@ export class StringUtilsPy {
     /**
      * 原始字符串的 key
      */
-    private static readonly originStrKey = 'originStrKey';
+    private static readonly originStrKey = 'originResult';
     /**
      * 变更后的字符串的 key
      */
-    private static readonly newStrKey = 'newStrKey';
+    private static readonly newStrKey = 'newResult';
     /**
      * 在原始字符串上体现变更的字符串的 key
      */
-    private static readonly resultAtOriginStrKey = 'resultAtOriginStrKey';
+    private static readonly resultAtOriginStrKey = 'mixResult';
     /**
      * 新增部分的颜色
      */
