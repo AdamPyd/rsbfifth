@@ -85,8 +85,9 @@ export class StringUtilsPy {
             [StringUtilsPy.addColor]: addColor,
             [StringUtilsPy.removeColor]: removeColor,
         };
-        StringUtilsPy.addSignStart = `<font style='background:${addColor};' color='${StringUtilsPy.getContrastColor(StringUtilsPy.addColor)}'>`;
-        StringUtilsPy.removeSignStart = `<font style='background:${removeColor};' color='${StringUtilsPy.getContrastColor(StringUtilsPy.removeColor)}'>`;
+        StringUtilsPy.addSignStart = `<font style='background:${addColor};' color='${StringUtilsPy.getContrastColor(addColor)}'>`;
+        StringUtilsPy.removeSignStart = `<font style='background:${removeColor};' color='${StringUtilsPy.getContrastColor(removeColor)}'>`;
+        debugger;
         const resultMap = StringUtilsPy.markDiffsBetweenStrs(
             map,
             StringUtilsPy.originStrKey,
