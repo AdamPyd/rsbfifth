@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Row, Col } from 'antd';
 import './CustomConfig.css';
+import { StringUtilsPy } from "../../../types/comparator/stringUtilsPy";
 
 interface ConfigProps {
     config: {
@@ -38,7 +39,7 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig }) => {
         <div className="custom-config-popup">
             <div className="config-row">
                 <label>
-                    <div className="color-preview" style={{ backgroundColor: config.addedColor, color: getContrastColor(config.addedColor) }} onClick={() => setShowAddedPicker(!showAddedPicker)} >
+                    <div className="color-preview" style={{ backgroundColor: config.addedColor, color: StringUtilsPy.getContrastColor(config.addedColor) }} onClick={() => setShowAddedPicker(!showAddedPicker)} >
                         新增部分的颜色
                     </div>
                     {showAddedPicker && (
@@ -52,7 +53,7 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig }) => {
                     )}
                 </label>
                 <label>
-                    <div className="color-preview" style={{ backgroundColor: config.deletedColor, color: getContrastColor(config.deletedColor) }} onClick={() => setShowDeletedPicker(!showDeletedPicker)} >
+                    <div className="color-preview" style={{ backgroundColor: config.deletedColor, color: StringUtilsPy.getContrastColor(config.deletedColor) }} onClick={() => setShowDeletedPicker(!showDeletedPicker)} >
                         删除部分的颜色
                     </div>
                     {showDeletedPicker && (
@@ -81,14 +82,6 @@ const CustomConfig: React.FC<ConfigProps> = ({ config, setConfig }) => {
             </div>
         </div>
     );
-};
-
-const getContrastColor = (hex: string) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return yiq >= 128 ? '#000' : '#fff';
 };
 
 export default CustomConfig;

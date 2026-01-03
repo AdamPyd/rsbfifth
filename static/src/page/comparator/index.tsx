@@ -73,9 +73,11 @@ const DiffComparator: React.FC = () => {
 
     // 文本变化时触发比较
     useEffect(() => {
-        if (!!textData.leftText || !!textData.rightText) {
-            const results = StringUtilsPy.compare(textData.leftText
-                , textData.rightText);
+        if (!!textData.leftText || !!textData.rightText
+            || !!config.addedColor || !!config.deletedColor) {
+            const results = StringUtilsPy.compare(
+                textData.leftText, textData.rightText
+                , config.addedColor, config.deletedColor);
             setDiffResults(results);
 
             // 展开结果区域

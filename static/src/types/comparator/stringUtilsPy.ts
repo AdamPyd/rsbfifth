@@ -31,15 +31,15 @@ export class StringUtilsPy {
     /**
      * 新增部分的颜色
      */
-    private static readonly ADD_COLOR = 'green';
+    private static readonly addColor = 'green';
     /**
      * 删除部分的颜色
      */
-    private static readonly REMOVE_COLOR = 'red';
+    private static readonly removeColor = 'red';
     /**
      * 新增的html标记的 起始 字符串
      */
-    private static readonly addSignStart = `<font style='background:${StringUtilsPy.ADD_COLOR};' color='black'>`;
+    private static addSignStart = `<font style='background:${StringUtilsPy.addColor};' color='${StringUtilsPy.getContrastColor(StringUtilsPy.addColor)}'>`;
     /**
      * 新增的html标记的 结束 字符串
      */
@@ -47,7 +47,7 @@ export class StringUtilsPy {
     /**
      * 删除的html标记的 起始 字符串
      */
-    private static readonly removeSignStart = `<font style='background:${StringUtilsPy.REMOVE_COLOR};' color='black'>`;
+    private static removeSignStart = `<font style='background:${StringUtilsPy.removeColor};' color='${StringUtilsPy.getContrastColor(StringUtilsPy.removeColor)}'>`;
     /**
      * 删除的html标记的 结束 字符串
      */
@@ -64,7 +64,8 @@ export class StringUtilsPy {
     public static test(): void {
         const originStr = '1bac2bcdef3ae4aaa5bbb6';
         const newStr = 'bac8ae9aaa7bbb9bcdef4';
-        const resultMap = StringUtilsPy.compare(originStr, newStr);
+        const resultMap = StringUtilsPy.compare(originStr, newStr
+            , StringUtilsPy.addColor, StringUtilsPy.removeColor);
         console.log(resultMap);
     }
 
@@ -72,13 +73,20 @@ export class StringUtilsPy {
      * 对比两个字符串，产出对比结果
      * @param originStr 原始字符串
      * @param newStr （可能）变更后的字符串
+     * @param addColor 新增部分的颜色
+     * @param removeColor 删除部分的颜色
      * @returns 对比结果的集合，有两个模式的对比结果。
      */
-    public static compare(originStr: string, newStr: string): Record<string, string> {
+    public static compare(originStr: string, newStr: string
+                          , addColor: string, removeColor: string): Record<string, string> {
         const map: Record<string, string> = {
             [StringUtilsPy.originStrKey]: originStr,
             [StringUtilsPy.newStrKey]: newStr,
+            [StringUtilsPy.addColor]: addColor,
+            [StringUtilsPy.removeColor]: removeColor,
         };
+        StringUtilsPy.addSignStart = `<font style='background:${addColor};' color='${StringUtilsPy.getContrastColor(StringUtilsPy.addColor)}'>`;
+        StringUtilsPy.removeSignStart = `<font style='background:${removeColor};' color='${StringUtilsPy.getContrastColor(StringUtilsPy.removeColor)}'>`;
         const resultMap = StringUtilsPy.markDiffsBetweenStrs(
             map,
             StringUtilsPy.originStrKey,
@@ -99,6 +107,15 @@ export class StringUtilsPy {
         resultMap[StringUtilsPy.resultAtOriginStrKey] = resultAtOriginStr;
         return resultMap;
     }
+
+
+    public static getContrastColor(hex: string){
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return yiq >= 128 ? '#000' : '#fff';
+    };
 
     /**
      * 比较两个字符串，将字符串中有变动的地方标记出来
@@ -265,7 +282,7 @@ export class StringUtilsPy {
                     originStrResultBuilder.push(
                         removeSignStart +
                         originStr.substring(currentStartIndex, originStr.length) +
-                        removeEnd
+                        removeSignEnd
                     );
                 }
             }
