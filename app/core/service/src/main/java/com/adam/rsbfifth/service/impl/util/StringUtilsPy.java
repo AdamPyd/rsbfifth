@@ -668,7 +668,7 @@ public final class StringUtilsPy {
      * @param str
      * @return
      */
-    private static boolean isBlank(String str){
+    public static boolean isBlank(String str){
         return str == null || "".equals(str);
     }
 
@@ -677,7 +677,7 @@ public final class StringUtilsPy {
      * @param str
      * @return
      */
-    private static boolean isNotBlank(String str){
+    public static boolean isNotBlank(String str){
         return str != null && !"".equals(str);
     }
 
@@ -687,7 +687,7 @@ public final class StringUtilsPy {
      * @param str2
      * @return
      */
-    private static boolean equals(String str1, String str2){
+    public static boolean equals(String str1, String str2){
         return (str1 == null && str2 == null) 
                 || (str1 != null && str1.equals(str2));
     }
