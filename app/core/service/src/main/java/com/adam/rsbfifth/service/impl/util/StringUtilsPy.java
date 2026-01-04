@@ -12,7 +12,7 @@ public final class StringUtilsPy {
      */
     private static final int MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR = 3;
     /**
-     * 校验当前求得的最长公共子串是否合法时，进行交叉对比时的阈值-{@value}
+     * 校验当前求得的最长公共子串是否合法时，进行交叉对比时的阈值,即不算当前最长公共子串后，下一级子串数不超过几个，此最长公共子串为合法的-{@value}
      */
     private static final int VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD = 2;
     /**
@@ -33,29 +33,31 @@ public final class StringUtilsPy {
      */
     private static final String resultAtOriginStrKey = "resultAtOriginStrKey";
     /**
-     * 新增部分的颜色-{@value}
+     * 新增部分的颜色，绿色-{@value}
      */
-    private static final String ADD_COLOR = "green";
+    private static final String ADD_COLOR = "#00FF00";
     /**
-     * 删除部分的颜色-{@value}
+     * 删除部分的颜色，红色-{@value}
      */
-    private static final String REMOVE_COLOR = "red";
-    /**
-     * 新增的html标记的 起始 字符串-{@value}
-     */
-    private static final String addSignStart = String.format("<font style='background:%s;' color='black'>", ADD_COLOR);
+    private static final String REMOVE_COLOR = "#FF0000";
+//    /**
+//     * 新增的html标记的 起始 字符串-{@value}
+//     */
+//    private static final String addSignStart = String.format("<font style='background:%s;' color='%s'>"
+//            , ADD_COLOR, getContrastColor(ADD_COLOR));
     /**
      * 新增的html标记的 结束 字符串-{@value}
      */
     private static final String addSignEnd = "</font>";
-    /**
-     * 删除的html标记的 起始 字符串-{@value}
-     */
-    private static final String removeSignStart = String.format("<font style='background:%s;' color='black'>", REMOVE_COLOR);
+//    /**
+//     * 删除的html标记的 起始 字符串-{@value}
+//     */
+//    private static final String removeSignStart = String.format("<s style='background:%s; text-decoration: line-through %s 3px;' color='%s'>"
+//            , REMOVE_COLOR, getContrastColor(REMOVE_COLOR), getContrastColor(REMOVE_COLOR));
     /**
      * 删除的html标记的 结束 字符串-{@value}
      */
-    private static final String removeSignEnd = "</font>";
+    private static final String removeSignEnd = "</s>";
 
     /**
      * 私有化构造方法，防止实例化
@@ -70,7 +72,10 @@ public final class StringUtilsPy {
     public static void main(String[] args) {
         String originStr = "1bac2bcdef3ae4aaa5bbb6";
         String newStr = "bac8ae9aaa7bbb9bcdef4";
-        Map<String, String> resultMap = compare(originStr, newStr);
+        Map<String, String> resultMap = compare(originStr, newStr
+                , ADD_COLOR, REMOVE_COLOR
+                , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
+                , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
         System.out.println(resultMap);
     }
 
@@ -78,6 +83,10 @@ public final class StringUtilsPy {
      * 对比两个字符串，产出对比结果
      * @param originStr 原始字符串
      * @param newStr （可能）变更后的字符串
+     * @param addColor 新增部分的背景色
+     * @param removeColor 删除部分的背景色
+     * @param minArrayLengthOfLongestCommonStr 最长公共子串的最小长度
+     * @param validateLongestCommonSonStrThreshold 校验当前求得的最长公共子串是否合法时，进行交叉对比时的阈值,即不算当前最长公共子串后，下一级子串数不超过几个，此最长公共子串为合法的
      * @return 对比结果的集合，有两个模式的对比结果。
      *          - 对比模式下
      *              {@link #originStrKey} 对应的是原始字符串的值，其中体现 删除 部分
@@ -85,13 +94,36 @@ public final class StringUtilsPy {
      *          - 融合模式下
      *              {@value #resultAtOriginStrKey} 对应的是原始字符串的值，其中体现了 新增、删除 的部分
      */
-    public static Map<String, String> compare(String originStr, String newStr) {
+    public static Map<String, String> compare(String originStr, String newStr
+            , String addColor, String removeColor
+            , Integer minArrayLengthOfLongestCommonStr, Integer validateLongestCommonSonStrThreshold) {
+        // 兜底配置
+        addColor = isBlank(addColor) ? ADD_COLOR : addColor;
+        removeColor = isBlank(removeColor) ? REMOVE_COLOR : removeColor;
+        minArrayLengthOfLongestCommonStr = minArrayLengthOfLongestCommonStr == null
+                ? MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR : minArrayLengthOfLongestCommonStr;
+        validateLongestCommonSonStrThreshold = validateLongestCommonSonStrThreshold == null
+                ? VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD : validateLongestCommonSonStrThreshold;
+
         HashMap<String, String> map = new HashMap<String, String>();
         map.put(originStrKey, originStr);
         map.put(newStrKey, newStr);
-        Map<String, String> resultMap = markDiffsBetweenStrs(map, originStrKey, newStrKey, addSignStart, addSignEnd, removeSignStart, removeSignEnd);
-        String resultAtOriginStr = markDiffsAtOriginBetweenStrs(originStr, newStr, addSignStart, addSignEnd, removeSignStart,
-                removeSignEnd);
+
+        // 新增的html标记的 起始 字符串
+        String addSignStart = String.format("<font style='background:%s;' color='%s'>"
+                , addColor, getContrastColor(addColor));
+        // 删除的html标记的 起始 字符串
+        String removeSignStart = String.format("<s style='background:%s; text-decoration: line-through black 3px;' color='%s'>"
+                , removeColor, getContrastColor(removeColor));
+
+        Map<String, String> resultMap = markDiffsBetweenStrs(map, originStrKey, newStrKey
+                , addSignStart, addSignEnd, removeSignStart, removeSignEnd
+                , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
+
+        String resultAtOriginStr = markDiffsAtOriginBetweenStrs(originStr, newStr
+                , addSignStart, addSignEnd, removeSignStart, removeSignEnd
+                , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
+
         resultMap.put(resultAtOriginStrKey, resultAtOriginStr);
         return resultMap;
     }
@@ -116,7 +148,8 @@ public final class StringUtilsPy {
      * @return Map<String, String> 标记后的字符串集合
      */
     public static Map<String, String> markDiffsBetweenStrs(Map<String, String> strsMap, String originStrKey, String
-            newStrKey, String addSignStart, String addSignEnd, String removeSignStart, String removeSignEnd){
+            newStrKey, String addSignStart, String addSignEnd, String removeSignStart, String removeSignEnd
+            , int minArrayLengthOfLongestCommonStr, int validateLongestCommonSonStrThreshold){
         boolean blankParamsFlag = strsMap == null || strsMap.size() < 1 || isBlank(originStrKey) ||
                 isBlank (newStrKey) || isBlank(addSignStart) || isBlank(addSignEnd)
                 || isBlank(removeSignStart) || isBlank(removeSignEnd);
@@ -151,7 +184,8 @@ public final class StringUtilsPy {
         } else {
             // 4、newStr 不为空 && originStr 不为空 && newStr != originStr
             resultMap = markDiffsBetweenUnequalStrs(strsMap, originStrKey, newStrKey, addSignStart, addSignEnd,
-                    removeSignStart, removeSignEnd);
+                    removeSignStart, removeSignEnd
+                    , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
         }
         return resultMap;
     }
@@ -176,7 +210,8 @@ public final class StringUtilsPy {
      * @return String 标记变更点后的字符串
      */
     public static String markDiffsAtOriginBetweenStrs(String originStr, String newStr, String addSignStart, String
-            addSignEnd, String moveSignStart, String moveSignEnd){
+            addSignEnd, String moveSignStart, String moveSignEnd
+            , int minArrayLengthOfLongestCommonStr, int validateLongestCommonSonStrThreshold){
         boolean blankParamsFlag = isBlank(addSignStart)
                 || isBlank(addSignEnd) || isBlank(moveSignStart) || isBlank(moveSignEnd);
         // 入参为空时返回空集合
@@ -197,10 +232,11 @@ public final class StringUtilsPy {
         } else {
             // 4、newStr 不为空 && originStr 不为空 && newStr != originStr
             return markDiffsAtOriginBetweenUnequalStrs(originStr, newStr, addSignStart, addSignEnd,
-                    moveSignStart, moveSignEnd);
+                    moveSignStart, moveSignEnd
+                    , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
         }
     }
-    
+
     /**
      * 比较两个非空且不同的字符串，将字符串中有变动的地方标记出来<br/>
      *      exp: <br/>
@@ -221,7 +257,8 @@ public final class StringUtilsPy {
      * @return Map<String, String> 标记后的字符串集合
      */
     private static Map<String, String> markDiffsBetweenUnequalStrs(Map<String, String> strsMap, String originStrKey, String
-            newStrKey, String addSignStart, String addSignEnd, String removeSignStart, String removeSignEnd){
+            newStrKey, String addSignStart, String addSignEnd, String removeSignStart, String removeSignEnd
+            , int minArrayLengthOfLongestCommonStr, int validateLongestCommonSonStrThreshold){
         Map<String, String> resultMap = new HashMap<String, String>();
         // 被比较的字符串
         String originStr = strsMap.get(originStrKey);
@@ -241,7 +278,8 @@ public final class StringUtilsPy {
          *  -> 递归上述两步操作
          */
         List<CommonSonStrArrayInfo> allSonStrList = new ArrayList<CommonSonStrArrayInfo>();
-        buildLongestSonStrArrayInfo(originCharArray, newCharArray, allSonStrList, 0, null, 0, 0);
+        buildLongestSonStrArrayInfo(originCharArray, newCharArray, allSonStrList, 0, null, 0, 0
+                , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
         if (allSonStrList == null || allSonStrList.size() < 1){
             // 1、两个字符串没有公共子串
             originStrResultBuilder.append(removeSignStart);
@@ -352,10 +390,11 @@ public final class StringUtilsPy {
      * @param originIndexStartOffset 当前 origin 字符数组相对root origin数组的起始偏移量
      * @param newIndexStartOffset 当前 new 字符数组相对root new数组的起始偏移量
      */
-    private static void buildLongestSonStrArrayInfo(char[] originCharArray, char[] newCharArray,
-                                                    List<CommonSonStrArrayInfo> allSonStrList, int minArrayLength,
-                                                    char[] excludeSonCharArray, int originIndexStartOffset, int
-                                                            newIndexStartOffset) {
+    private static void buildLongestSonStrArrayInfo(char[] originCharArray, char[] newCharArray
+            , List<CommonSonStrArrayInfo> allSonStrList, int minArrayLength
+            , char[] excludeSonCharArray, int originIndexStartOffset
+            , int newIndexStartOffset
+            , int minArrayLengthOfLongestCommonStr, int validateLongestCommonSonStrThreshold) {
         // 1、递归退出声明
         if (originCharArray.length < 1 || newCharArray.length < 1){
             return;
@@ -476,19 +515,22 @@ public final class StringUtilsPy {
         // 2.6.2、获取origin的左与new的右子串的长度大于阈值3的公共子串集合
         List<CommonSonStrArrayInfo> originLeftNewRightSonStrList = new ArrayList<CommonSonStrArrayInfo>();
         buildLongestSonStrArrayInfo(originCharArrayLeft,
-                newCharArrayRight, originLeftNewRightSonStrList, MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR, null,
-                originIndexStartOffset, newEndIndex + 1);
+                newCharArrayRight, originLeftNewRightSonStrList, minArrayLengthOfLongestCommonStr, null,
+                originIndexStartOffset, newEndIndex + 1
+                , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
         // 2.6.3、获取origin的右与new的左子串的长度大于阈值3的公共子串集合
         List<CommonSonStrArrayInfo> originRightNewLeftSonStrList = new ArrayList<CommonSonStrArrayInfo>();
         buildLongestSonStrArrayInfo(originCharArrayRight,
-                newCharArrayLeft, originLeftNewRightSonStrList, MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR, null,
-                originEndIndex + 1, newIndexStartOffset);
+                newCharArrayLeft, originLeftNewRightSonStrList, minArrayLengthOfLongestCommonStr, null,
+                originEndIndex + 1, newIndexStartOffset
+                , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
         // 2.6.4、判断当前最长公共子串是否合法
-        if (originLeftNewRightSonStrList.size() > VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD ||
-                originRightNewLeftSonStrList.size() > VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD){
+        if (originLeftNewRightSonStrList.size() > validateLongestCommonSonStrThreshold ||
+                originRightNewLeftSonStrList.size() > validateLongestCommonSonStrThreshold){
             // 求出的最长公共子串不合法，剔除该子串后重新求最长公共子串重新求最长公共子串
             buildLongestSonStrArrayInfo(originCharArray, newCharArray, allSonStrList, 0, currentCommonSonNewArray,
-                    originIndexStartOffset, newIndexStartOffset);
+                    originIndexStartOffset, newIndexStartOffset
+                    , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
         } else if (currentCommonSonNewArray.length >= minArrayLength){
             // 求出的最长公共子串合法,并且长度符合要求，将信息构建到list集合中
             try {
@@ -511,10 +553,12 @@ public final class StringUtilsPy {
         if (longestCommonSonStrArrayInfo != null) {
             // 3.1、获取origin的左与new的左子串的公共子串集合
             buildLongestSonStrArrayInfo(originCharArrayLeft,
-                    newCharArrayLeft, allSonStrList, 0, null, originIndexStartOffset, newIndexStartOffset);
+                    newCharArrayLeft, allSonStrList, 0, null, originIndexStartOffset, newIndexStartOffset
+                    , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
             // 3.2、获取origin的右与new的右子串的公共子串集合
             buildLongestSonStrArrayInfo(originCharArrayRight,
-                    newCharArrayRight, allSonStrList, 0, null, longestCommonSonStrArrayInfo.getOriginEndIndex() + 1, longestCommonSonStrArrayInfo.getNewEndIndex() + 1);
+                    newCharArrayRight, allSonStrList, 0, null, longestCommonSonStrArrayInfo.getOriginEndIndex() + 1, longestCommonSonStrArrayInfo.getNewEndIndex() + 1
+                    , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
         }
     }
 
@@ -538,7 +582,8 @@ public final class StringUtilsPy {
      * @return String 标记变更点后的字符串
      */
     private static String markDiffsAtOriginBetweenUnequalStrs(String originStr, String
-            newStr, String addSignStart, String addSignEnd, String moveSignStart, String moveSignEnd){
+            newStr, String addSignStart, String addSignEnd, String moveSignStart, String moveSignEnd
+            , int minArrayLengthOfLongestCommonStr, int validateLongestCommonSonStrThreshold){
         // 转换为字符数组。Java的String底层实际就是以char[]存储的，所以转换不会消耗啥资源；同时，转换成char[]后，便于对单个数组元素进行比较
         char[] originCharArray = originStr.toCharArray();
         char[] newCharArray = newStr.toCharArray();
@@ -552,7 +597,8 @@ public final class StringUtilsPy {
          *  -> 递归上述两步操作
          */
         List<CommonSonStrArrayInfo> allSonStrList = new ArrayList<CommonSonStrArrayInfo>();
-        buildLongestSonStrArrayInfo(originCharArray, newCharArray, allSonStrList, 0, null, 0, 0);
+        buildLongestSonStrArrayInfo(originCharArray, newCharArray, allSonStrList, 0, null, 0, 0
+                , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
         if (allSonStrList == null || allSonStrList.size() < 1){
             // 1、两个字符串没有公共子串
             mixedStrResultBuilder.append(moveSignStart);
@@ -712,5 +758,18 @@ public final class StringUtilsPy {
 
             return obj1.getNewStartIndex() > obj2.getNewStartIndex() ? 1 : -1;
         }
+    }
+
+    /**
+     * 获取目标颜色的相反色。因为颜色相反，可用于对比
+     * @param hex 目标颜色
+     * @return 相反的颜色
+     */
+    public static String getContrastColor(String hex) {
+        int r = Integer.parseInt(hex.substring(1, 3), 16);
+        int g = Integer.parseInt(hex.substring(3, 5), 16);
+        int b = Integer.parseInt(hex.substring(5, 7), 16);
+        double yiq = (r * 299 + g * 587 + b * 114) / 1000.0;
+        return yiq >= 128 ? "#000" : "#fff";
     }
 }
