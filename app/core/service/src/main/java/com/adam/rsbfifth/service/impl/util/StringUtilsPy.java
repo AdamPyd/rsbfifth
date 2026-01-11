@@ -80,6 +80,47 @@ public final class StringUtilsPy {
     }
 
     /**
+     * 对比两个字符串，产出对比结果，能识别行变更
+     * @param originStr 原始字符串
+     * @param newStr （可能）变更后的字符串
+     * @param addColor 新增部分的背景色
+     * @param removeColor 删除部分的背景色
+     * @param minArrayLengthOfLongestCommonStr 最长公共子串的最小长度
+     * @param validateLongestCommonSonStrThreshold 校验当前求得的最长公共子串是否合法时，进行交叉对比时的阈值,即不算当前最长公共子串后，下一级子串数不超过几个，此最长公共子串为合法的
+     * @return 对比结果的集合，有两个模式的对比结果。
+     *          - 对比模式下
+     *              {@link #originStrKey} 对应的是原始字符串的值，其中体现 删除 部分
+     *              {@link #newStrKey} 对应的是（可能）变更后的字符串的值，其中体现 新增 部分
+     *          - 融合模式下
+     *              {@value #resultAtOriginStrKey} 对应的是原始字符串的值，其中体现了 新增、删除 的部分
+     */
+    public static Map<String, String> compareCareLineChange(String originStr, String newStr
+            , String addColor, String removeColor
+            , Integer minArrayLengthOfLongestCommonStr, Integer validateLongestCommonSonStrThreshold){
+
+        // 1、根据换行符（"\n"）拆分 originStr 和 newStr
+        // 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
+        /*
+         * 2.1、以 originStrLineArr[index] 为基准，在 newStrLineArr 中找与之匹配的行
+         * 这里面沿用LCS(最长连续公共子串)的思路，按顺序遍历 originStrLineArr 和 newStrLineArr
+         * ，查找最长连续公共子串（并且对最长连续公共子串进行合法性校验)
+         *
+         * 2.2、按照 originStrLineArr 的顺序往下捋 newStrLineArr
+         *      newStrLineArr 有此 originStrLineArr[index] 匹配的行
+         *          originStrLineArrIndex == newStrLineArrIndex 的，作为不变行
+         *          originStrLineArrIndex == newStrLineArrIndex 的，作为不变行
+         *      newStrLineArr 没有此 originStrLineArr[index] 匹配的行
+         *          标记 originStrLineArr[index] 此行删除
+         *          originStrLineArr size+1
+         *          newStrLineArrIndex[index] 此行标记删除
+         *          newStrLineArrIndex size+1
+         *
+         *    todo
+         */
+        // 3、对匹配上的行对比字符串（#compare)方法逻辑
+    }
+
+    /**
      * 对比两个字符串，产出对比结果
      * @param originStr 原始字符串
      * @param newStr （可能）变更后的字符串
