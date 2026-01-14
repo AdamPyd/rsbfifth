@@ -101,11 +101,71 @@ public final class StringUtilsPy {
         // 1、根据换行符（"\n"）拆分 originStr 和 newStr
         // 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
         /*
-         * 2.1、以 originStrLineArr[index] 为基准，在 newStrLineArr 中找与之匹配的行
+         * 以 originStrLineArr[index] 为基准在 newStrLineArr 中找与之匹配的行
          * 这里面沿用LCS(最长连续公共子串)的思路，按顺序遍历 originStrLineArr 和 newStrLineArr
          * ，查找最长连续公共子串（并且对最长连续公共子串进行合法性校验)
          *
-         * 2.2、按照 originStrLineArr 的顺序往下捋 newStrLineArr
+         * 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
+         *
+         * 2.1.1、遍历 newStrLineArr
+         * 2.1.2、对比 originStrLineArr[index] 和 newStrLineArr[j++]
+         *  ,依次取得 originStrLineArr[index] 和各 newStrLineArr[j++] 的最长公共子串
+         * 2.1.3、对求得的最长连续公共子串进行合法性校验
+         * 2.1.4、得到结果
+           {
+              // originIndex
+              "0":
+              {
+                "originIndex": 0,
+                "originLineStr": "originLineStr",
+                "newStrMappingWithOrder": [
+                // 按照 commonLongestSubStr 长短，由长到短排序
+                  {
+                    "newIndex": 2,
+                    "newLineStr": "newStrLine",
+                    "commonLongestSubStr": "commonLongestSubStr"
+                  }
+                ]
+              }
+            }
+         * 2.2、遍历 #2.1.4 的结果，组装出 笛卡尔积，得到
+         *      最多 originStrLineArr.size * newStrLineArr.size 个组合，每个组合均需要保证这几个条件
+         *          2.2.1、originIndex、newIndex 均按由小到大排序
+         *          2.2.2、commonLongestSubStr 不能为空
+         *          组合结果结构为
+                    [
+                      // 每个 item 即为一个组合
+                      [
+                        // 每个 item 即为一个映射关系，originIndex 一定连续，但是 newStrMapping 不一定有值
+                        {
+                          "originIndex": 0,
+                          "originLineStr": "originLineStr",
+                          "newStrMapping": {
+                            "newIndex": 2,
+                            "newLineStr": "newStrLine",
+                            "commonLongestSubStr": "commonLongestSubStr"
+                          }
+                        },
+                        {
+                          "originIndex": 1,
+                          "originLineStr": "originLineStr",
+                          "newStrMapping": null
+                        },
+                        {
+                          "originIndex": 2,
+                          "originLineStr": "originLineStr",
+                          "newStrMapping": {
+                            "newIndex": 3,
+                            "newLineStr": "newStrLine",
+                            "commonLongestSubStr": "commonLongestSubStr"
+                          }
+                        }
+                      ]
+         *
+         * 2.3、遍历 #2.2 得出的结果，取 size 最长的 items，从中选一个 item，作为最终结果
+         *      todo 怎么选 item，需要再考虑
+         *
+         * 2.3、按照 originStrLineArr 的顺序往下捋 newStrLineArr
          *      newStrLineArr 有此 originStrLineArr[index] 匹配的行
          *          originStrLineArrIndex == newStrLineArrIndex 的，作为不变行
          *          originStrLineArrIndex == newStrLineArrIndex 的，作为不变行
@@ -115,7 +175,7 @@ public final class StringUtilsPy {
          *          newStrLineArrIndex[index] 此行标记删除
          *          newStrLineArrIndex size+1
          *
-         *    todo
+         *
          */
         // 3、对匹配上的行对比字符串（#compare)方法逻辑
     }
