@@ -163,21 +163,30 @@ public final class StringUtilsPy {
                       ]
          *
          * 2.3、遍历 #2.2 得出的结果，取 size 最长的 items，从中选一个 item，作为最终结果
-         *      todo 怎么选 item，需要再考虑
+         *      2.3.1、取出 size 最长的 items
+         *      2.3.2、各 items 分别拼接 commonLongestSubStr，
+         *          取 commonLongestSubStrTotal 最长的第一个 item，结构同 #2.2.2
          *
-         * 2.3、按照 originStrLineArr 的顺序往下捋 newStrLineArr
-         *      newStrLineArr 有此 originStrLineArr[index] 匹配的行
-         *          originStrLineArrIndex == newStrLineArrIndex 的，作为不变行
-         *          originStrLineArrIndex == newStrLineArrIndex 的，作为不变行
-         *      newStrLineArr 没有此 originStrLineArr[index] 匹配的行
-         *          标记 originStrLineArr[index] 此行删除
-         *          originStrLineArr size+1
-         *          newStrLineArrIndex[index] 此行标记删除
-         *          newStrLineArrIndex size+1
+         * 2.4、遍历 #2.3.2 中结果，对 originStrLineArr 和 newStrLineArr 进行标注。
+         *      构建 originIndexOffsetMap 和 newIndexOffsetMap。key 为原 index，value 为新 index
+         *      todo 怎么偏移新集合、还需要眼球
+         *      2.4.1、newStrMapping 为空时
+         *          2.4.1.1、originStrLineArr[i] 标注为删除（红背景，删除线）
+         *          2.4.1.2、originStrLineArr.size + 1
+         *          2.4.1.3、newStrLineArr.size + 1
+         *          2.4.1.4、newStrLineArr 的 [i, newStrLineArr.size) 下标 +1
+         *          2.4.1.5、newStrLineArr [i] 赋值为 originStrLineArr[i].size 的空字符串，标注为删除（红背景）
+         *      2.4.2、newStrMapping 不为空时
+         *          2.4.2.1、originIndex == newIndex
+         *              对 originIndex 和 newIndex 执行对比字符串（#compare)方法逻辑
+         *          2.4.2.2、originIndex > newIndex
+         *              对 originIndex 和 newIndex 执行对比字符串（#compare)方法逻辑
+         *              ps : 这时认为 originStrLineArr[newIndex - originIndex]已经补齐了
+         *          2.4.2.3、originIndex < newIndex
+         *
          *
          *
          */
-        // 3、对匹配上的行对比字符串（#compare)方法逻辑
     }
 
     /**
