@@ -99,6 +99,7 @@ public final class StringUtilsPy {
             , Integer minArrayLengthOfLongestCommonStr, Integer validateLongestCommonSonStrThreshold){
 
         // 1、根据换行符（"\n"）拆分 originStr 和 newStr
+
         // 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
         /*
          * 以 originStrLineArr[index] 为基准在 newStrLineArr 中找与之匹配的行
@@ -168,8 +169,8 @@ public final class StringUtilsPy {
          *          取 commonLongestSubStrTotal 最长的第一个 item，结构同 #2.2.2
          *
          * 2.4、遍历 #2.3.2 中结果，对 originStrLineArr 和 newStrLineArr 进行标注。
-         *      构建 originIndexOffsetMap 和 newIndexOffsetMap。key 为原 index，value 为新 index
-         *      todo 怎么偏移新集合、还需要眼球
+         *      构建 originIndexOffsetMap 和 newIndexOffsetMap，key 为原 index，value 为新 index。
+         *      构建 originIndexOffsetList、 newIndexOffsetList，两个 list.size 一样
          *      2.4.1、newStrMapping 为空时
          *          2.4.1.1、originStrLineArr[i] 标注为删除（红背景，删除线）
          *          2.4.1.2、originStrLineArr.size + 1
