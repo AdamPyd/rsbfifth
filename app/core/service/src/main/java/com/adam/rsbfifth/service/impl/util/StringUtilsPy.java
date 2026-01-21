@@ -2,6 +2,7 @@ package com.adam.rsbfifth.service.impl.util;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -103,18 +104,69 @@ public final class StringUtilsPy {
         String[] newStrLineArr = newStr.split("\n");
 
         // 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
+        HashMap<String, StrLineToAnotherStrLinesMapping> originLineToNewLineMap = new HashMap<>();
         // 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
         for (int i = 0; i < originStrLineArr.length; i++){
+            StrLineToAnotherStrLinesMapping currentOriginMappingObj = new StrLineToAnotherStrLinesMapping();
+            currentOriginMappingObj.setLineIndex(i);
+            currentOriginMappingObj.setLineStr(originStrLineArr[i]);
+            originLineToNewLineMap.put(Integer.toString(i), currentOriginMappingObj);
             // 2.1.1、遍历 newStrLineArr
             for (int j = 0; j < newStrLineArr.length; j++){
                 List<CommonSonStrArrayInfo> allSonStrList = new ArrayList<CommonSonStrArrayInfo>();
+                /*
+                 * 2.1.2、对比 originStrLineArr[index] 和 newStrLineArr[j++],依次取得 originStrLineArr[index] 和各 newStrLineArr[j++] 的最长公共子串
+                 * 2.1.3、对求得的最长连续公共子串进行合法性校验
+                 */
                 buildLongestSonStrArrayInfo(originStr.toCharArray(), newStr.toCharArray(), allSonStrList, 0, null, 0, 0
                         , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
-                // 对 allSonStrList 按照 sonStr 由小到大排序
+                if (CollectionUtils.isEmpty(allSonStrList)){
+                    // originStrLine 与 这行 newStrLine 没有最长公共子串，不组装
+                    continue;
+                }
+                // 对 allSonStrList 按照 sonStr.length 由大到小排序
                 StrLengthComparator originStrComparator = new StrLengthComparator();
                 Collections.sort(allSonStrList, originStrComparator);
-                // todo
+                // 取第一个即为最长公共子串
+                CommonSonStrArrayInfo longestCommonStrInfo = allSonStrList.get(0);
+                List<StrLineToAnotherStrLinesMapping> newStrMappingList = currentOriginMappingObj.getNewStrMappingWithOrder();
+                if (null == newStrMappingList) {
+                    newStrMappingList = new ArrayList<>();
+                    currentOriginMappingObj.setNewStrMappingWithOrder(newStrMappingList);
+                }
+                StrLineToAnotherStrLinesMapping currentNewMappingObj = new StrLineToAnotherStrLinesMapping();
+                currentNewMappingObj.setLineIndex(j);
+                currentNewMappingObj.setLineStr(newStrLineArr[j]);
+                // 取第一个.todo 这里需要验证起始下标
+                currentNewMappingObj.setCommonLongestSubStr(newStrLineArr[j].substring(longestCommonStrInfo.getNewStartIndex(), longestCommonStrInfo.getNewEndIndex() + 1));
+                newStrMappingList.add(currentNewMappingObj);
             }
+        }
+
+        // 2.2、遍历 #2.1.4 的结果，组装出 笛卡尔积 todo 这里要想想，怎么组装笛卡尔积
+        Iterator<Map.Entry<String, StrLineToAnotherStrLinesMapping>> iterator = originLineToNewLineMap.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, StrLineToAnotherStrLinesMapping> next = iterator.next();
+            StrLineToAnotherStrLinesMapping originStrLineMapping = next.getValue();
+            // 新开一个 mapping
+            StrLineToAnotherStrLinesMapping originToNewMap = new StrLineToAnotherStrLinesMapping();
+            originToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
+            originToNewMap.setLineStr(originStrLineMapping.getLineStr());
+
+            List<StrLineToAnotherStrLinesMapping> newStrMappingWithOrder = originStrLineMapping.getNewStrMappingWithOrder();
+            if (null == newStrMappingWithOrder || newStrMappingWithOrder.isEmpty()) {
+                // 没有对应的最长公共子串
+                continue;
+            }
+            for (int i = 0; i < newStrMappingWithOrder.size(); i++){
+
+            }
+
+            // ??? 对 newStrMappingWithOrder 按照 longestCommonStr.length 由大到小排序
+            StrLineLongestCommonStrComparator originStrComparator = new StrLineLongestCommonStrComparator();
+            Collections.sort(newStrMappingWithOrder, originStrComparator);
+            // 取最长的
+            originToNewMap.setNewStrMapping(newStrMappingWithOrder.get(0));
         }
         /*
          * 以 originStrLineArr[index] 为基准在 newStrLineArr 中找与之匹配的行
@@ -132,12 +184,12 @@ public final class StringUtilsPy {
               // originIndex
               "0":
               {
-                "originIndex": 0,
+                "originLineIndex": 0,
                 "originLineStr": "originLineStr",
                 "newStrMappingWithOrder": [
                 // 按照 commonLongestSubStr 长短，由长到短排序
                   {
-                    "newIndex": 2,
+                    "newLineIndex": 2,
                     "newLineStr": "newStrLine",
                     "commonLongestSubStr": "commonLongestSubStr"
                   }
@@ -154,24 +206,24 @@ public final class StringUtilsPy {
                       [
                         // 每个 item 即为一个映射关系，originIndex 一定连续，但是 newStrMapping 不一定有值
                         {
-                          "originIndex": 0,
+                          "originLineIndex": 0,
                           "originLineStr": "originLineStr",
                           "newStrMapping": {
-                            "newIndex": 2,
+                            "newLineIndex": 2,
                             "newLineStr": "newStrLine",
                             "commonLongestSubStr": "commonLongestSubStr"
                           }
                         },
                         {
-                          "originIndex": 1,
+                          "originLineIndex": 1,
                           "originLineStr": "originLineStr",
                           "newStrMapping": null
                         },
                         {
-                          "originIndex": 2,
+                          "originLineIndex": 2,
                           "originLineStr": "originLineStr",
                           "newStrMapping": {
-                            "newIndex": 3,
+                            "newLineIndex": 3,
                             "newLineStr": "newStrLine",
                             "commonLongestSubStr": "commonLongestSubStr"
                           }
@@ -203,6 +255,7 @@ public final class StringUtilsPy {
          *
          *
          */
+        return null;
     }
 
     /**
@@ -849,6 +902,42 @@ public final class StringUtilsPy {
     }
 
     /**
+     * 用于存储 originStr 的某一行，对应 newStr 的所有行的公共子串映射
+     */
+    static class StrLineToAnotherStrLinesMapping{
+        /**
+         * lineStr 在 strLineArr 中的下标
+         */
+        @Getter
+        @Setter
+        private int lineIndex;
+        /**
+         * lineStr 的值（一整行)
+         */
+        @Getter
+        @Setter
+        private String lineStr;
+        /**
+         * 最长公共子串
+         */
+        @Getter
+        @Setter
+        private String commonLongestSubStr;
+        /**
+         * 对应的新字符串的映射关系，按照 commonLongestSubStr 长短，由长到短排序
+         */
+        @Getter
+        @Setter
+        private List<StrLineToAnotherStrLinesMapping> newStrMappingWithOrder;
+        /**
+         * 对应的唯一的新字符串
+         */
+        @Getter
+        @Setter
+        private StrLineToAnotherStrLinesMapping newStrMapping;
+    }
+
+    /**
      * 针对 originStrInfo 的排序器
      */
     static class OriginStrComparator implements Comparator{
@@ -882,9 +971,32 @@ public final class StringUtilsPy {
             CommonSonStrArrayInfo obj1 = (CommonSonStrArrayInfo) o1;
             CommonSonStrArrayInfo obj2 = (CommonSonStrArrayInfo) o2;
 
+            // length 大的排在前面，一样大的话，不改变原顺序
             return (obj1.getOriginEndIndex() - obj1.getOriginStartIndex())
                     > (obj2.getOriginEndIndex() - obj2.getOriginStartIndex())
-                    ? 1 : -1;
+                    ? -1 : 1;
+        }
+    }
+
+    /**
+     * 行级的最长公共子串比较器
+     */
+    static class StrLineLongestCommonStrComparator implements Comparator{
+        /**
+         * compare
+         * @param o1
+         * @param o2
+         * @return
+         */
+        @Override
+        public int compare(Object o1, Object o2) {
+            StrLineToAnotherStrLinesMapping obj1 = (StrLineToAnotherStrLinesMapping) o1;
+            StrLineToAnotherStrLinesMapping obj2 = (StrLineToAnotherStrLinesMapping) o2;
+
+            // comonLongestSubStr 长的排在前面，一样长的话，不改变原顺序
+            return obj1.getCommonLongestSubStr().length()
+                    > obj2.getCommonLongestSubStr().length()
+                    ? -1 : 1;
         }
     }
 
