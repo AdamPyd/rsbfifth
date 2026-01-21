@@ -99,8 +99,23 @@ public final class StringUtilsPy {
             , Integer minArrayLengthOfLongestCommonStr, Integer validateLongestCommonSonStrThreshold){
 
         // 1、根据换行符（"\n"）拆分 originStr 和 newStr
+        String[] originStrLineArr = originStr.split("\n");
+        String[] newStrLineArr = newStr.split("\n");
 
         // 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
+        // 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
+        for (int i = 0; i < originStrLineArr.length; i++){
+            // 2.1.1、遍历 newStrLineArr
+            for (int j = 0; j < newStrLineArr.length; j++){
+                List<CommonSonStrArrayInfo> allSonStrList = new ArrayList<CommonSonStrArrayInfo>();
+                buildLongestSonStrArrayInfo(originStr.toCharArray(), newStr.toCharArray(), allSonStrList, 0, null, 0, 0
+                        , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
+                // 对 allSonStrList 按照 sonStr 由小到大排序
+                StrLengthComparator originStrComparator = new StrLengthComparator();
+                Collections.sort(allSonStrList, originStrComparator);
+                // todo
+            }
+        }
         /*
          * 以 originStrLineArr[index] 为基准在 newStrLineArr 中找与之匹配的行
          * 这里面沿用LCS(最长连续公共子串)的思路，按顺序遍历 originStrLineArr 和 newStrLineArr
@@ -849,6 +864,27 @@ public final class StringUtilsPy {
             CommonSonStrArrayInfo obj2 = (CommonSonStrArrayInfo) o2;
 
             return obj1.getOriginStartIndex() > obj2.getOriginStartIndex() ? 1 : -1;
+        }
+    }
+
+    /**
+     * 针对 str length 的排序器
+     */
+    static class StrLengthComparator implements Comparator{
+        /**
+         * compare
+         * @param o1
+         * @param o2
+         * @return
+         */
+        @Override
+        public int compare(Object o1, Object o2) {
+            CommonSonStrArrayInfo obj1 = (CommonSonStrArrayInfo) o1;
+            CommonSonStrArrayInfo obj2 = (CommonSonStrArrayInfo) o2;
+
+            return (obj1.getOriginEndIndex() - obj1.getOriginStartIndex())
+                    > (obj2.getOriginEndIndex() - obj2.getOriginStartIndex())
+                    ? 1 : -1;
         }
     }
 
