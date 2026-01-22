@@ -104,13 +104,13 @@ public final class StringUtilsPy {
         String[] newStrLineArr = newStr.split("\n");
 
         // 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
-        HashMap<String, StrLineToAnotherStrLinesMapping> originLineToNewLineMap = new HashMap<>();
+        ArrayList<StrLineToAnotherStrLinesMapping> originLineToNewLineList = new ArrayList<>();
         // 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
         for (int i = 0; i < originStrLineArr.length; i++){
             StrLineToAnotherStrLinesMapping currentOriginMappingObj = new StrLineToAnotherStrLinesMapping();
             currentOriginMappingObj.setLineIndex(i);
             currentOriginMappingObj.setLineStr(originStrLineArr[i]);
-            originLineToNewLineMap.put(Integer.toString(i), currentOriginMappingObj);
+            originLineToNewLineList.add(currentOriginMappingObj);
             // 2.1.1、遍历 newStrLineArr
             for (int j = 0; j < newStrLineArr.length; j++){
                 List<CommonSonStrArrayInfo> allSonStrList = new ArrayList<CommonSonStrArrayInfo>();
@@ -144,10 +144,59 @@ public final class StringUtilsPy {
         }
 
         // 2.2、遍历 #2.1.4 的结果，组装出 笛卡尔积 todo 这里要想想，怎么组装笛卡尔积
-        Iterator<Map.Entry<String, StrLineToAnotherStrLinesMapping>> iterator = originLineToNewLineMap.entrySet().iterator();
+        // 笛卡尔积结果集合
+        List<List<StrLineToAnotherStrLinesMapping>> cartesianProductResultList = new ArrayList<>();
+        // 笛卡尔积结果临时集合，key 为 originLineStr 的 index
+        Map<String, List<List<StrLineToAnotherStrLinesMapping>>> cartesianProductResultMap = new ArrayList<>();
+        for (int i = 0; i < originLineToNewLineList.size(); i++){
+            // 取之前的链路生成的笛卡尔积
+            List<List<StrLineToAnotherStrLinesMapping>> pastLinkedMappingList = null;
+            if (i == 0){
+                pastLinkedMappingList = new ArrayList<>();
+            } else {
+                pastLinkedMappingList = cartesianProductResultMap.get(Integer.toString(i - 1));
+            }
+
+            // originStrLine 和 newStrLines 的对应关系
+            StrLineToAnotherStrLinesMapping originStrLineMapping = originLineToNewLineList.get(i);
+
+            List<StrLineToAnotherStrLinesMapping> newStrMappingWithOrder = originStrLineMapping.getNewStrMappingWithOrder();
+            if (null == newStrMappingWithOrder || newStrMappingWithOrder.isEmpty()) {
+                /// 没有对应的最长公共子串
+                // 新开一个无 newStrLine 映射关系的 originStrLineMapping
+                StrLineToAnotherStrLinesMapping currentLoopOriginToNewMap = new StrLineToAnotherStrLinesMapping();
+                currentLoopOriginToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
+                currentLoopOriginToNewMap.setLineStr(originStrLineMapping.getLineStr());
+
+                // 遍历之前的笛卡尔积，将本循环的数据组装进来，生成新的笛卡尔积
+                List<List<StrLineToAnotherStrLinesMapping>> newCartesianProductResultListAffterAddToPast
+                        = getNewCartesianProductResultListAffterAddToPast(currentLoopOriginToNewMap, pastLinkedMappingList);
+                cartesianProductResultMap.put(Integer.toString(i), newCartesianProductResultListAffterAddToPast);
+                continue;
+            }
+
+            // 有对应的最长公共子串,遍历子串列表 todo 这里组装笛卡尔积的逻辑还有问题
+            for (StrLineToAnotherStrLinesMapping strLineToAnotherStrLinesMapping : newStrMappingWithOrder){
+                // 新开一个无 newStrLine 映射关系的 originStrLineMapping
+                StrLineToAnotherStrLinesMapping currentLoopOriginToNewMap = new StrLineToAnotherStrLinesMapping();
+                currentLoopOriginToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
+                currentLoopOriginToNewMap.setLineStr(originStrLineMapping.getLineStr());
+
+                StrLineToAnotherStrLinesMapping newStrLineMapping = new StrLineToAnotherStrLinesMapping(strLineToAnotherStrLinesMapping.getLineIndex()
+                        , strLineToAnotherStrLinesMapping.getLineStr()
+                        , strLineToAnotherStrLinesMapping.getCommonLongestSubStr());
+                currentLoopOriginToNewMap.setNewStrMapping(newStrLineMapping);
+                // 遍历之前的笛卡尔积，将本循环的数据组装进来，生成新的笛卡尔积
+                List<List<StrLineToAnotherStrLinesMapping>> newCartesianProductResultListAffterAddToPast
+                        = getNewCartesianProductResultListAffterAddToPast(currentLoopOriginToNewMap, pastLinkedMappingList);
+            }
+        }
+
+
         while (iterator.hasNext()){
             Map.Entry<String, StrLineToAnotherStrLinesMapping> next = iterator.next();
             StrLineToAnotherStrLinesMapping originStrLineMapping = next.getValue();
+            
             // 新开一个 mapping
             StrLineToAnotherStrLinesMapping originToNewMap = new StrLineToAnotherStrLinesMapping();
             originToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
@@ -181,8 +230,6 @@ public final class StringUtilsPy {
          * 2.1.3、对求得的最长连续公共子串进行合法性校验
          * 2.1.4、得到结果
            {
-              // originIndex
-              "0":
               {
                 "originLineIndex": 0,
                 "originLineStr": "originLineStr",
@@ -843,6 +890,32 @@ public final class StringUtilsPy {
     }
 
     /**
+     * 将新的元素组装到原笛卡尔积中，形成新的笛卡尔积
+     * @param currentLoopOriginToNewMap
+     * @param pastLinkedMappingList
+     */
+    private static List<List<StrLineToAnotherStrLinesMapping>> getNewCartesianProductResultListAffterAddToPast(StrLineToAnotherStrLinesMapping currentLoopOriginToNewMap
+            , List<List<StrLineToAnotherStrLinesMapping>> pastLinkedMappingList){
+        List<List<StrLineToAnotherStrLinesMapping>> newResultList = new ArrayList<>();
+
+        // 遍历笛卡尔积，将元素挂载到各item后
+        if (CollectionUtils.isEmpty(pastLinkedMappingList)){
+            List<StrLineToAnotherStrLinesMapping> newList = new ArrayList<>();
+            newList.add(currentLoopOriginToNewMap);
+            newResultList.add(newList);
+            return newResultList;
+        }
+
+        for (List<StrLineToAnotherStrLinesMapping> currentProductResult : pastLinkedMappingList){
+            List<StrLineToAnotherStrLinesMapping> newCurrentCartesianProductItem = new ArrayList<>(currentProductResult);
+            newCurrentCartesianProductItem.add(currentLoopOriginToNewMap);
+            newResultList.add(newCurrentCartesianProductItem);
+        }
+
+        return newResultList;
+    }
+
+    /**
      * isBlank
      * @param str
      * @return
@@ -923,6 +996,26 @@ public final class StringUtilsPy {
         @Getter
         @Setter
         private String commonLongestSubStr;
+
+        /**
+         * 无参构造
+         */
+        public StrLineToAnotherStrLinesMapping() {
+            super();
+        }
+
+        /**
+         * 有参构造
+         * @param lineIndex
+         * @param lineStr
+         * @param commonLongestSubStr
+         */
+        public StrLineToAnotherStrLinesMapping(int lineIndex, String lineStr, String commonLongestSubStr) {
+            this.lineIndex = lineIndex;
+            this.lineStr = lineStr;
+            this.commonLongestSubStr = commonLongestSubStr;
+        }
+
         /**
          * 对应的新字符串的映射关系，按照 commonLongestSubStr 长短，由长到短排序
          */
