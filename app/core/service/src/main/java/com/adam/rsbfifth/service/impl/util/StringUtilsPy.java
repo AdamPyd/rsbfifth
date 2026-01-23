@@ -73,11 +73,132 @@ public final class StringUtilsPy {
     public static void main(String[] args) {
         String originStr = "1bac2bcdef3ae4aaa5bbb6";
         String newStr = "bac8ae9aaa7bbb9bcdef4";
-        Map<String, String> resultMap = compare(originStr, newStr
+//        Map<String, String> resultMap = compare(originStr, newStr
+//                , ADD_COLOR, REMOVE_COLOR
+//                , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
+//                , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
+        Map<String, String> resultMap = compareCareLineChange(originStr, newStr
                 , ADD_COLOR, REMOVE_COLOR
                 , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
                 , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
         System.out.println(resultMap);
+    }
+
+    /**
+     * 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
+     * @param originStrLineArr
+     * @param newStrLineArr
+     * @param minArrayLengthOfLongestCommonStr
+     * @param validateLongestCommonSonStrThreshold
+     * @return
+     */
+    private static List<StrLineToAnotherStrLinesMapping> getOriginLineToNewLineList(String[] originStrLineArr
+            , String[] newStrLineArr, Integer minArrayLengthOfLongestCommonStr, Integer validateLongestCommonSonStrThreshold){
+        List<StrLineToAnotherStrLinesMapping> originLineToNewLineList = new ArrayList<>();
+        // 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
+        for (int i = 0; i < originStrLineArr.length; i++){
+            StrLineToAnotherStrLinesMapping currentOriginMappingObj = new StrLineToAnotherStrLinesMapping();
+            currentOriginMappingObj.setLineIndex(i);
+            currentOriginMappingObj.setLineStr(originStrLineArr[i]);
+            originLineToNewLineList.add(currentOriginMappingObj);
+            // 2.1.1、遍历 newStrLineArr
+            for (int j = 0; j < newStrLineArr.length; j++){
+                List<CommonSonStrArrayInfo> allSonStrList = new ArrayList<CommonSonStrArrayInfo>();
+                /*
+                 * 2.1.2、对比 originStrLineArr[index] 和 newStrLineArr[j++],依次取得 originStrLineArr[index] 和各 newStrLineArr[j++] 的最长公共子串
+                 * 2.1.3、对求得的最长连续公共子串进行合法性校验
+                 */
+                buildLongestSonStrArrayInfo(originStrLineArr[i].toCharArray(), newStrLineArr[j].toCharArray()
+                        , allSonStrList, 0, null, 0, 0
+                        , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
+                if (CollectionUtils.isEmpty(allSonStrList)){
+                    // originStrLine 与 这行 newStrLine 没有最长公共子串，不组装
+                    continue;
+                }
+                // 对 allSonStrList 按照 sonStr.length 由大到小排序
+                StrLengthComparator originStrComparator = new StrLengthComparator();
+                Collections.sort(allSonStrList, originStrComparator);
+                // 取第一个即为最长公共子串
+                CommonSonStrArrayInfo longestCommonStrInfo = allSonStrList.get(0);
+                List<StrLineToAnotherStrLinesMapping> newStrMappingList = currentOriginMappingObj.getNewStrMappingWithOrder();
+                if (null == newStrMappingList) {
+                    newStrMappingList = new ArrayList<>();
+                    currentOriginMappingObj.setNewStrMappingWithOrder(newStrMappingList);
+                }
+                StrLineToAnotherStrLinesMapping currentNewMappingObj = new StrLineToAnotherStrLinesMapping();
+                currentNewMappingObj.setLineIndex(j);
+                currentNewMappingObj.setLineStr(newStrLineArr[j]);
+                // 取第一个.
+                currentNewMappingObj.setCommonLongestSubStr(
+                        newStrLineArr[j].substring(longestCommonStrInfo.getNewStartIndex()
+                                , longestCommonStrInfo.getNewEndIndex() + 1));
+                newStrMappingList.add(currentNewMappingObj);
+            }
+        }
+        return originLineToNewLineList;
+    }
+
+    /**
+     * 2.2、遍历 #2.1.4 的结果，组装出 笛卡尔积
+     * @param originLineToNewLineList
+     * @return
+     */
+    private static List<List<StrLineToAnotherStrLinesMapping>> getCartesianProductResultList(
+            List<StrLineToAnotherStrLinesMapping> originLineToNewLineList){
+        // 笛卡尔积结果临时集合，key 为 originLineStr 的 index
+        Map<String, List<List<StrLineToAnotherStrLinesMapping>>> cartesianProductResultMap = new HashMap<>();
+        for (int i = 0; i < originLineToNewLineList.size(); i++){
+            // 取之前的链路生成的笛卡尔积
+            List<List<StrLineToAnotherStrLinesMapping>> pastLinkedMappingList = null;
+            if (i == 0){
+                pastLinkedMappingList = new ArrayList<>();
+            } else {
+                pastLinkedMappingList = cartesianProductResultMap.get(Integer.toString(i - 1));
+            }
+
+            // 本 originStrLine 对应的笛卡尔级集合
+            List<List<StrLineToAnotherStrLinesMapping>> newCartesianProductResultListAffterAddToPast
+                    = new ArrayList<>();
+            // originStrLine 和 newStrLines 的对应关系
+            StrLineToAnotherStrLinesMapping originStrLineMapping = originLineToNewLineList.get(i);
+
+            List<StrLineToAnotherStrLinesMapping> newStrMappingWithOrder = originStrLineMapping.getNewStrMappingWithOrder();
+            if (null == newStrMappingWithOrder || newStrMappingWithOrder.isEmpty()) {
+                /// 没有对应的最长公共子串
+                // 新开一个无 newStrLine 映射关系的 originStrLineMapping
+                StrLineToAnotherStrLinesMapping currentLoopOriginToNewMap = new StrLineToAnotherStrLinesMapping();
+                currentLoopOriginToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
+                currentLoopOriginToNewMap.setLineStr(originStrLineMapping.getLineStr());
+
+                // 遍历之前的笛卡尔积，将本循环的数据组装进来，生成新的笛卡尔积
+                newCartesianProductResultListAffterAddToPast.addAll(
+                        getNewCartesianProductResultListAffterAddToPast(currentLoopOriginToNewMap
+                                , pastLinkedMappingList));
+                cartesianProductResultMap.put(Integer.toString(i), newCartesianProductResultListAffterAddToPast);
+                continue;
+            }
+
+            // 有对应的最长公共子串,遍历子串列表
+            for (StrLineToAnotherStrLinesMapping strLineToAnotherStrLinesMapping : newStrMappingWithOrder){
+                // 新开一个无 newStrLine 映射关系的 originStrLineMapping
+                StrLineToAnotherStrLinesMapping currentLoopOriginToNewMap = new StrLineToAnotherStrLinesMapping();
+                currentLoopOriginToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
+                currentLoopOriginToNewMap.setLineStr(originStrLineMapping.getLineStr());
+
+                StrLineToAnotherStrLinesMapping newStrLineMapping = new StrLineToAnotherStrLinesMapping(strLineToAnotherStrLinesMapping.getLineIndex()
+                        , strLineToAnotherStrLinesMapping.getLineStr()
+                        , strLineToAnotherStrLinesMapping.getCommonLongestSubStr());
+                currentLoopOriginToNewMap.setNewStrMapping(newStrLineMapping);
+                // 遍历之前的笛卡尔积，将本循环的数据组装进来，生成新的笛卡尔积
+                newCartesianProductResultListAffterAddToPast.addAll(
+                        getNewCartesianProductResultListAffterAddToPast(currentLoopOriginToNewMap
+                                , pastLinkedMappingList));
+            }
+            cartesianProductResultMap.put(Integer.toString(i), newCartesianProductResultListAffterAddToPast);
+        }
+        // 最终全量的笛卡尔积
+        return cartesianProductResultMap
+                .get(Integer.toString(originLineToNewLineList.size() - 1));
     }
 
     /**
@@ -103,120 +224,16 @@ public final class StringUtilsPy {
         String[] originStrLineArr = originStr.split("\n");
         String[] newStrLineArr = newStr.split("\n");
 
-        // 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
-        ArrayList<StrLineToAnotherStrLinesMapping> originLineToNewLineList = new ArrayList<>();
+        /// 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
         // 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
-        for (int i = 0; i < originStrLineArr.length; i++){
-            StrLineToAnotherStrLinesMapping currentOriginMappingObj = new StrLineToAnotherStrLinesMapping();
-            currentOriginMappingObj.setLineIndex(i);
-            currentOriginMappingObj.setLineStr(originStrLineArr[i]);
-            originLineToNewLineList.add(currentOriginMappingObj);
-            // 2.1.1、遍历 newStrLineArr
-            for (int j = 0; j < newStrLineArr.length; j++){
-                List<CommonSonStrArrayInfo> allSonStrList = new ArrayList<CommonSonStrArrayInfo>();
-                /*
-                 * 2.1.2、对比 originStrLineArr[index] 和 newStrLineArr[j++],依次取得 originStrLineArr[index] 和各 newStrLineArr[j++] 的最长公共子串
-                 * 2.1.3、对求得的最长连续公共子串进行合法性校验
-                 */
-                buildLongestSonStrArrayInfo(originStr.toCharArray(), newStr.toCharArray(), allSonStrList, 0, null, 0, 0
-                        , minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
-                if (CollectionUtils.isEmpty(allSonStrList)){
-                    // originStrLine 与 这行 newStrLine 没有最长公共子串，不组装
-                    continue;
-                }
-                // 对 allSonStrList 按照 sonStr.length 由大到小排序
-                StrLengthComparator originStrComparator = new StrLengthComparator();
-                Collections.sort(allSonStrList, originStrComparator);
-                // 取第一个即为最长公共子串
-                CommonSonStrArrayInfo longestCommonStrInfo = allSonStrList.get(0);
-                List<StrLineToAnotherStrLinesMapping> newStrMappingList = currentOriginMappingObj.getNewStrMappingWithOrder();
-                if (null == newStrMappingList) {
-                    newStrMappingList = new ArrayList<>();
-                    currentOriginMappingObj.setNewStrMappingWithOrder(newStrMappingList);
-                }
-                StrLineToAnotherStrLinesMapping currentNewMappingObj = new StrLineToAnotherStrLinesMapping();
-                currentNewMappingObj.setLineIndex(j);
-                currentNewMappingObj.setLineStr(newStrLineArr[j]);
-                // 取第一个.todo 这里需要验证起始下标
-                currentNewMappingObj.setCommonLongestSubStr(newStrLineArr[j].substring(longestCommonStrInfo.getNewStartIndex(), longestCommonStrInfo.getNewEndIndex() + 1));
-                newStrMappingList.add(currentNewMappingObj);
-            }
-        }
+        List<StrLineToAnotherStrLinesMapping> originLineToNewLineList = getOriginLineToNewLineList(originStrLineArr
+                , newStrLineArr, minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
 
-        // 2.2、遍历 #2.1.4 的结果，组装出 笛卡尔积 todo 这里要想想，怎么组装笛卡尔积
-        // 笛卡尔积结果集合
-        List<List<StrLineToAnotherStrLinesMapping>> cartesianProductResultList = new ArrayList<>();
-        // 笛卡尔积结果临时集合，key 为 originLineStr 的 index
-        Map<String, List<List<StrLineToAnotherStrLinesMapping>>> cartesianProductResultMap = new ArrayList<>();
-        for (int i = 0; i < originLineToNewLineList.size(); i++){
-            // 取之前的链路生成的笛卡尔积
-            List<List<StrLineToAnotherStrLinesMapping>> pastLinkedMappingList = null;
-            if (i == 0){
-                pastLinkedMappingList = new ArrayList<>();
-            } else {
-                pastLinkedMappingList = cartesianProductResultMap.get(Integer.toString(i - 1));
-            }
-
-            // originStrLine 和 newStrLines 的对应关系
-            StrLineToAnotherStrLinesMapping originStrLineMapping = originLineToNewLineList.get(i);
-
-            List<StrLineToAnotherStrLinesMapping> newStrMappingWithOrder = originStrLineMapping.getNewStrMappingWithOrder();
-            if (null == newStrMappingWithOrder || newStrMappingWithOrder.isEmpty()) {
-                /// 没有对应的最长公共子串
-                // 新开一个无 newStrLine 映射关系的 originStrLineMapping
-                StrLineToAnotherStrLinesMapping currentLoopOriginToNewMap = new StrLineToAnotherStrLinesMapping();
-                currentLoopOriginToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
-                currentLoopOriginToNewMap.setLineStr(originStrLineMapping.getLineStr());
-
-                // 遍历之前的笛卡尔积，将本循环的数据组装进来，生成新的笛卡尔积
-                List<List<StrLineToAnotherStrLinesMapping>> newCartesianProductResultListAffterAddToPast
-                        = getNewCartesianProductResultListAffterAddToPast(currentLoopOriginToNewMap, pastLinkedMappingList);
-                cartesianProductResultMap.put(Integer.toString(i), newCartesianProductResultListAffterAddToPast);
-                continue;
-            }
-
-            // 有对应的最长公共子串,遍历子串列表 todo 这里组装笛卡尔积的逻辑还有问题
-            for (StrLineToAnotherStrLinesMapping strLineToAnotherStrLinesMapping : newStrMappingWithOrder){
-                // 新开一个无 newStrLine 映射关系的 originStrLineMapping
-                StrLineToAnotherStrLinesMapping currentLoopOriginToNewMap = new StrLineToAnotherStrLinesMapping();
-                currentLoopOriginToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
-                currentLoopOriginToNewMap.setLineStr(originStrLineMapping.getLineStr());
-
-                StrLineToAnotherStrLinesMapping newStrLineMapping = new StrLineToAnotherStrLinesMapping(strLineToAnotherStrLinesMapping.getLineIndex()
-                        , strLineToAnotherStrLinesMapping.getLineStr()
-                        , strLineToAnotherStrLinesMapping.getCommonLongestSubStr());
-                currentLoopOriginToNewMap.setNewStrMapping(newStrLineMapping);
-                // 遍历之前的笛卡尔积，将本循环的数据组装进来，生成新的笛卡尔积
-                List<List<StrLineToAnotherStrLinesMapping>> newCartesianProductResultListAffterAddToPast
-                        = getNewCartesianProductResultListAffterAddToPast(currentLoopOriginToNewMap, pastLinkedMappingList);
-            }
-        }
+        // 2.2、遍历 #2.1.4 的结果，组装出 笛卡尔积
+        List<List<StrLineToAnotherStrLinesMapping>> cartesianProductResultList = getCartesianProductResultList
+                (originLineToNewLineList);
 
 
-        while (iterator.hasNext()){
-            Map.Entry<String, StrLineToAnotherStrLinesMapping> next = iterator.next();
-            StrLineToAnotherStrLinesMapping originStrLineMapping = next.getValue();
-            
-            // 新开一个 mapping
-            StrLineToAnotherStrLinesMapping originToNewMap = new StrLineToAnotherStrLinesMapping();
-            originToNewMap.setLineIndex(originStrLineMapping.getLineIndex());
-            originToNewMap.setLineStr(originStrLineMapping.getLineStr());
-
-            List<StrLineToAnotherStrLinesMapping> newStrMappingWithOrder = originStrLineMapping.getNewStrMappingWithOrder();
-            if (null == newStrMappingWithOrder || newStrMappingWithOrder.isEmpty()) {
-                // 没有对应的最长公共子串
-                continue;
-            }
-            for (int i = 0; i < newStrMappingWithOrder.size(); i++){
-
-            }
-
-            // ??? 对 newStrMappingWithOrder 按照 longestCommonStr.length 由大到小排序
-            StrLineLongestCommonStrComparator originStrComparator = new StrLineLongestCommonStrComparator();
-            Collections.sort(newStrMappingWithOrder, originStrComparator);
-            // 取最长的
-            originToNewMap.setNewStrMapping(newStrMappingWithOrder.get(0));
-        }
         /*
          * 以 originStrLineArr[index] 为基准在 newStrLineArr 中找与之匹配的行
          * 这里面沿用LCS(最长连续公共子串)的思路，按顺序遍历 originStrLineArr 和 newStrLineArr
