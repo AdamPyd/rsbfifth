@@ -71,18 +71,18 @@ public final class StringUtilsPy {
      * @param args
      */
     public static void main(String[] args) {
-//        String originStr = "1bac2bcdef3ae4aaa5bbb6";
-//        String newStr = "bac8ae9aaa7bbb9bcdef4";
-        String originStr = "123aaaa567b8";
-        String newStr = "aaaa1235678b";
-        Map<String, String> resultMap = compare(originStr, newStr
-                , ADD_COLOR, REMOVE_COLOR
-                , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
-                , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
-//        Map<String, String> resultMap = compareCareLineChange(originStr, newStr
+        String originStr = "1bac2bcdef3ae4aaa5bbb6";
+        String newStr = "bac8ae9aaa7bbb9bcdef4";
+//        String originStr = "123aaaa567b8";
+//        String newStr = "aaaa1235678b";
+//        Map<String, String> resultMap = compare(originStr, newStr
 //                , ADD_COLOR, REMOVE_COLOR
 //                , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
 //                , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
+        Map<String, String> resultMap = compareCareLineChange(originStr, newStr
+                , ADD_COLOR, REMOVE_COLOR
+                , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
+                , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
         System.out.println(resultMap);
     }
 
@@ -198,7 +198,7 @@ public final class StringUtilsPy {
                 continue;
             }
 
-            // 有对应的最长公共子串,遍历子串列表
+            // 有对应的最长公共子串,遍历子串列表，todo 从 pastLinkedMappingList 中 new.strLineIndex 后开始接
             for (StrLineToAnotherStrLinesMapping strLineToAnotherStrLinesMapping : newStrMappingWithOrder){
                 // 新开一个无 newStrLine 映射关系的 originStrLineMapping
                 StrLineToAnotherStrLinesMapping currentLoopOriginToNewMap = new StrLineToAnotherStrLinesMapping();
