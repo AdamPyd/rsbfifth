@@ -71,16 +71,18 @@ public final class StringUtilsPy {
      * @param args
      */
     public static void main(String[] args) {
-        String originStr = "1bac2bcdef3ae4aaa5bbb6";
-        String newStr = "bac8ae9aaa7bbb9bcdef4";
-//        Map<String, String> resultMap = compare(originStr, newStr
-//                , ADD_COLOR, REMOVE_COLOR
-//                , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
-//                , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
-        Map<String, String> resultMap = compareCareLineChange(originStr, newStr
+//        String originStr = "1bac2bcdef3ae4aaa5bbb6";
+//        String newStr = "bac8ae9aaa7bbb9bcdef4";
+        String originStr = "123aaaa567b8";
+        String newStr = "aaaa1235678b";
+        Map<String, String> resultMap = compare(originStr, newStr
                 , ADD_COLOR, REMOVE_COLOR
                 , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
                 , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
+//        Map<String, String> resultMap = compareCareLineChange(originStr, newStr
+//                , ADD_COLOR, REMOVE_COLOR
+//                , MIN_ARRAY_LENGTH_OF_LONGEST_COMMON_STR
+//                , VALIDATE_LONGEST_COMMON_SON_STR_THRESHOLD);
         System.out.println(resultMap);
     }
 
@@ -118,8 +120,8 @@ public final class StringUtilsPy {
                 // 对 allSonStrList 按照 sonStr.length 由大到小排序
                 StrLengthComparator originStrComparator = new StrLengthComparator();
                 Collections.sort(allSonStrList, originStrComparator);
-                // 取第一个即为最长公共子串
-                CommonSonStrArrayInfo longestCommonStrInfo = allSonStrList.get(0);
+//                // 取第一个即为最长公共子串
+//                CommonSonStrArrayInfo longestCommonStrInfo = allSonStrList.get(0);
                 List<StrLineToAnotherStrLinesMapping> newStrMappingList = currentOriginMappingObj.getNewStrMappingWithOrder();
                 if (null == newStrMappingList) {
                     newStrMappingList = new ArrayList<>();
@@ -128,14 +130,32 @@ public final class StringUtilsPy {
                 StrLineToAnotherStrLinesMapping currentNewMappingObj = new StrLineToAnotherStrLinesMapping();
                 currentNewMappingObj.setLineIndex(j);
                 currentNewMappingObj.setLineStr(newStrLineArr[j]);
-                // 取第一个.
-                currentNewMappingObj.setCommonLongestSubStr(
-                        newStrLineArr[j].substring(longestCommonStrInfo.getNewStartIndex()
-                                , longestCommonStrInfo.getNewEndIndex() + 1));
+                // 转换出连续公共子串数组
+                String[] allCommonSonStrArr = getAllCommonSonStrArr(allSonStrList, newStrLineArr[j]);
+                currentNewMappingObj.setCommonSubStrArr(allCommonSonStrArr);
                 newStrMappingList.add(currentNewMappingObj);
             }
         }
         return originLineToNewLineList;
+    }
+
+    /**
+     * 获取所有公共子串的数组
+     * @param allSonStrList
+     * @param newStrLine
+     * @return
+     */
+    private static String[] getAllCommonSonStrArr(List<CommonSonStrArrayInfo> allSonStrList, String newStrLine) {
+        if (CollectionUtils.isEmpty(allSonStrList) || StringUtilsPy.isBlank(newStrLine)) {
+            return new String[0];
+        }
+        String[] commonSonStrArr = new String[allSonStrList.size()];
+        for (int i = 0; i < allSonStrList.size(); i++){
+            CommonSonStrArrayInfo currentCommonSonStrArrayInfo = allSonStrList.get(i);
+            commonSonStrArr[i] = newStrLine.substring(currentCommonSonStrArrayInfo.getNewStartIndex()
+                    , currentCommonSonStrArrayInfo.getNewEndIndex() + 1);
+        }
+        return commonSonStrArr;
     }
 
     /**
@@ -187,7 +207,7 @@ public final class StringUtilsPy {
 
                 StrLineToAnotherStrLinesMapping newStrLineMapping = new StrLineToAnotherStrLinesMapping(strLineToAnotherStrLinesMapping.getLineIndex()
                         , strLineToAnotherStrLinesMapping.getLineStr()
-                        , strLineToAnotherStrLinesMapping.getCommonLongestSubStr());
+                        , strLineToAnotherStrLinesMapping.getCommonSubStrArr());
                 currentLoopOriginToNewMap.setNewStrMapping(newStrLineMapping);
                 // 遍历之前的笛卡尔积，将本循环的数据组装进来，生成新的笛卡尔积
                 newCartesianProductResultListAffterAddToPast.addAll(
@@ -225,7 +245,7 @@ public final class StringUtilsPy {
         String[] newStrLineArr = newStr.split("\n");
 
         /// 2、对比 originStrLineArr 和 newStrLineArr，识别行变更。
-        // 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
+        // 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行全量公共子串集合
         List<StrLineToAnotherStrLinesMapping> originLineToNewLineList = getOriginLineToNewLineList(originStrLineArr
                 , newStrLineArr, minArrayLengthOfLongestCommonStr, validateLongestCommonSonStrThreshold);
 
@@ -239,23 +259,23 @@ public final class StringUtilsPy {
          * 这里面沿用LCS(最长连续公共子串)的思路，按顺序遍历 originStrLineArr 和 newStrLineArr
          * ，查找最长连续公共子串（并且对最长连续公共子串进行合法性校验)
          *
-         * 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行最长公共子串集合
+         * 2.1、遍历 originStrLineArr，匹配到 originStrLineArr 各行对应的 newStrLineArr 各行全量公共子串集合
          *
          * 2.1.1、遍历 newStrLineArr
          * 2.1.2、对比 originStrLineArr[index] 和 newStrLineArr[j++]
          *  ,依次取得 originStrLineArr[index] 和各 newStrLineArr[j++] 的最长公共子串
-         * 2.1.3、对求得的最长连续公共子串进行合法性校验
+         * 2.1.3、对求得的全量（含最长）连续公共子串进行合法性校验
          * 2.1.4、得到结果
            {
               {
                 "originLineIndex": 0,
                 "originLineStr": "originLineStr",
                 "newStrMappingWithOrder": [
-                // 按照 commonLongestSubStr 长短，由长到短排序
+                // 按照 commonSubStrArr 长短，由长到短排序
                   {
                     "newLineIndex": 2,
                     "newLineStr": "newStrLine",
-                    "commonLongestSubStr": "commonLongestSubStr"
+                    "commonSubStrArr": "commonSubStrArr"
                   }
                 ]
               }
@@ -263,7 +283,7 @@ public final class StringUtilsPy {
          * 2.2、遍历 #2.1.4 的结果，组装出 笛卡尔积，得到
          *      最多 originStrLineArr.size * newStrLineArr.size 个组合，每个组合均需要保证这几个条件
          *          2.2.1、originIndex、newIndex 均按由小到大排序
-         *          2.2.2、commonLongestSubStr 不能为空
+         *          2.2.2、commonSubStrArr.combine 不能为空
          *          组合结果结构为
                     [
                       // 每个 item 即为一个组合
@@ -275,7 +295,7 @@ public final class StringUtilsPy {
                           "newStrMapping": {
                             "newLineIndex": 2,
                             "newLineStr": "newStrLine",
-                            "commonLongestSubStr": "commonLongestSubStr"
+                            "commonSubStrArr": ["commonSubStr"]
                           }
                         },
                         {
@@ -289,15 +309,15 @@ public final class StringUtilsPy {
                           "newStrMapping": {
                             "newLineIndex": 3,
                             "newLineStr": "newStrLine",
-                            "commonLongestSubStr": "commonLongestSubStr"
+                            "commonSubStrArr": ["commonSubStr"]
                           }
                         }
                       ]
          *
          * 2.3、遍历 #2.2 得出的结果，取 size 最长的 items，从中选一个 item，作为最终结果
          *      2.3.1、取出 size 最长的 items
-         *      2.3.2、各 items 分别拼接 commonLongestSubStr，
-         *          取 commonLongestSubStrTotal 最长的第一个 item，结构同 #2.2.2
+         *      2.3.2、各 items 分别拼接 commonSubStrArr.combine，
+         *          取 commonSubStrTotal 最长的第一个 item，结构同 #2.2.2
          *
          * 2.4、遍历 #2.3.2 中结果，对 originStrLineArr 和 newStrLineArr 进行标注。
          *      构建 originIndexOffsetMap 和 newIndexOffsetMap，key 为原 index，value 为新 index。
@@ -1008,11 +1028,11 @@ public final class StringUtilsPy {
         @Setter
         private String lineStr;
         /**
-         * 最长公共子串
+         * 全量公共子串
          */
         @Getter
         @Setter
-        private String commonLongestSubStr;
+        private String[] commonSubStrArr;
 
         /**
          * 无参构造
@@ -1025,16 +1045,16 @@ public final class StringUtilsPy {
          * 有参构造
          * @param lineIndex
          * @param lineStr
-         * @param commonLongestSubStr
+         * @param commonSubStrArr
          */
-        public StrLineToAnotherStrLinesMapping(int lineIndex, String lineStr, String commonLongestSubStr) {
+        public StrLineToAnotherStrLinesMapping(int lineIndex, String lineStr, String[] commonSubStrArr) {
             this.lineIndex = lineIndex;
             this.lineStr = lineStr;
-            this.commonLongestSubStr = commonLongestSubStr;
+            this.commonSubStrArr = commonSubStrArr;
         }
 
         /**
-         * 对应的新字符串的映射关系，按照 commonLongestSubStr 长短，由长到短排序
+         * 对应的新字符串的映射关系，按照 commonSubStrArr.combine 长短，由长到短排序
          */
         @Getter
         @Setter
@@ -1089,9 +1109,9 @@ public final class StringUtilsPy {
     }
 
     /**
-     * 行级的最长公共子串比较器
+     * 行级的连续公共子串数组长度比较器
      */
-    static class StrLineLongestCommonStrComparator implements Comparator{
+    static class StrLineCommonStrArrComparator implements Comparator{
         /**
          * compare
          * @param o1
@@ -1103,9 +1123,11 @@ public final class StringUtilsPy {
             StrLineToAnotherStrLinesMapping obj1 = (StrLineToAnotherStrLinesMapping) o1;
             StrLineToAnotherStrLinesMapping obj2 = (StrLineToAnotherStrLinesMapping) o2;
 
-            // comonLongestSubStr 长的排在前面，一样长的话，不改变原顺序
-            return obj1.getCommonLongestSubStr().length()
-                    > obj2.getCommonLongestSubStr().length()
+            // comonSubStr.combine 长的排在前面，一样长的话，不改变原顺序
+            return obj2.getCommonSubStrArr() == null
+                    || (obj1.getCommonSubStrArr() != null
+                        && String.join("", obj1.getCommonSubStrArr()).length()
+                        > String.join("", obj2.getCommonSubStrArr()).length())
                     ? -1 : 1;
         }
     }
